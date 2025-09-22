@@ -1,5 +1,5 @@
 import { faker } from '@faker-js/faker';
-import { Product } from '../types';
+import { Product, OrderStatus } from '../types';
 
 const imageUrls = {
   Medicines: [
@@ -115,4 +115,29 @@ export const generateProducts = (count: number, options?: GenerationOptions): Pr
             tags: options?.tags || [],
         };
     });
+};
+
+export const generateOrderHistory = (count: number) => {
+    return Array.from({ length: count }, () => {
+        const products = generateProducts(faker.number.int({ min: 1, max: 5 }));
+        const total = products.reduce((sum, p) => sum + p.price, 0);
+        return {
+            id: `TP${faker.number.int({ min: 100000, max: 999999 })}`,
+            date: faker.date.past({ years: 1 }).toLocaleDateString(),
+            status: faker.helpers.arrayElement(['Delivered', 'Processing', 'Cancelled']),
+            total: total.toFixed(2),
+            items: products,
+        };
+    });
+};
+
+export const generateAddresses = (count: number) => {
+    return Array.from({ length: count }, (_, i) => ({
+        id: faker.string.uuid(),
+        isDefault: i === 0,
+        type: faker.helpers.arrayElement(['Home', 'Work']),
+        name: faker.person.fullName(),
+        address: `${faker.location.streetAddress()}, ${faker.location.city()}`,
+        phone: faker.phone.number(),
+    }));
 };

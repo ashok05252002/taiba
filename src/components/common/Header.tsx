@@ -1,12 +1,16 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { Search, User, Menu, X, Globe } from 'lucide-react';
+import { Search, User, Menu, X, Globe, ShoppingCart } from 'lucide-react';
 import { useLanguage } from '../../hooks/useLanguage';
+import { useCart } from '../../contexts/CartContext';
+import MiniCart from './MiniCart';
 
 const Header: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isCartOpen, setIsCartOpen] = useState(false);
   const { toggleLanguage, t, isRTL, currentLanguage } = useLanguage();
+  const { cartCount } = useCart();
 
   return (
     <motion.header
@@ -59,6 +63,29 @@ const Header: React.FC = () => {
               </span>
             </motion.button>
             
+            {/* Cart */}
+            <div
+              className="relative hidden md:block"
+              onMouseEnter={() => setIsCartOpen(true)}
+              onMouseLeave={() => setIsCartOpen(false)}
+            >
+              <Link to="/cart">
+                <motion.button
+                  className="relative p-2 rounded-full hover:bg-gray-100"
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
+                >
+                  <ShoppingCart className="w-6 h-6 text-taiba-grey" />
+                  {cartCount > 0 && (
+                    <span className="absolute -top-1 -right-1 bg-taiba-mustard text-black text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold">
+                      {cartCount}
+                    </span>
+                  )}
+                </motion.button>
+              </Link>
+              {isCartOpen && <MiniCart />}
+            </div>
+
             {/* Profile */}
             <Link to="/profile">
                 <motion.button
@@ -100,6 +127,7 @@ const Header: React.FC = () => {
             </div>
             <nav className="flex flex-col space-y-2">
                 <Link to="/products" className="text-gray-700 hover:bg-gray-100 p-3 rounded-md font-medium">Products</Link>
+                <Link to="/cart" className="text-gray-700 hover:bg-gray-100 p-3 rounded-md font-medium">Cart ({cartCount})</Link>
                 <a href="https://wa.me/968XXXXXXXX" target="_blank" rel="noopener noreferrer" className="text-gray-700 hover:bg-gray-100 p-3 rounded-md font-medium">WhatsApp Support</a>
             </nav>
           </motion.div>
