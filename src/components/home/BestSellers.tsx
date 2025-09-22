@@ -1,0 +1,68 @@
+import React, { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
+import { Product } from '../../types';
+import ProductCard from '../common/ProductCard';
+import LoadingLottie from '../common/LoadingLottie';
+import { generateProducts } from '../../utils/mockData';
+
+const BestSellers: React.FC = () => {
+    const [products, setProducts] = useState<Product[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        setLoading(true);
+        setTimeout(() => {
+            setProducts(generateProducts(4, { isBestSeller: true, tags: ['Best Seller 🔥'] }));
+            setLoading(false);
+        }, 700);
+    }, []);
+
+    return (
+        <section>
+            <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
+                <motion.div
+                    className="text-center mb-12"
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.6 }}
+                    viewport={{ once: true }}
+                >
+                    <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+                        Our Best Sellers
+                    </h2>
+                    <p className="text-lg text-taiba-grey max-w-2xl mx-auto">
+                        Trusted by our customers, loved for their results.
+                    </p>
+                </motion.div>
+                
+                {loading ? (
+                    <div className="flex justify-center items-center h-96">
+                        <LoadingLottie />
+                    </div>
+                ) : (
+                    <motion.div 
+                        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8"
+                        initial="hidden"
+                        whileInView="visible"
+                        viewport={{ once: true, amount: 0.2 }}
+                        transition={{ staggerChildren: 0.1 }}
+                    >
+                        {products.map((product) => (
+                            <motion.div
+                                key={product.id}
+                                variants={{
+                                    hidden: { opacity: 0, y: 20 },
+                                    visible: { opacity: 1, y: 0 }
+                                }}
+                            >
+                                <ProductCard product={product} />
+                            </motion.div>
+                        ))}
+                    </motion.div>
+                )}
+            </div>
+        </section>
+    );
+};
+
+export default BestSellers;
