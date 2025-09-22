@@ -7,21 +7,21 @@ import { Link } from 'react-router-dom';
 const banners = [
   {
     id: 1,
-    image: 'https://img.freepik.com/premium-vector/medical-healthcare-facebook-cover-design-template_556595-255.jpg?semt=ais_incoming&w=740&q=80',
+    image: 'https://static.vecteezy.com/system/resources/previews/001/937/762/non_2x/digital-online-healthcare-transport-doctor-delivery-on-scooter-with-map-and-location-pin-on-mobile-phone-concept-for-emergency-health-medical-vector.jpg',
     title: 'Your Health, Our Priority',
     subtitle: 'Get your medicines delivered to your doorstep within hours, anywhere in Oman.',
     cta: 'Shop Medicines Now'
   },
   {
     id: 2,
-    image: 'https://img.freepik.com/free-vector/gradient-medical-twitter-header_23-2149169417.jpg',
+    image: 'https://png.pngtree.com/png-clipart/20220511/original/pngtree-pharmacy-delivery-banner-medicine-online-png-image_7711772.png',
     title: 'Unbeatable Seasonal Offers',
     subtitle: 'Up to 50% off on wellness and skincare products. Limited time only!',
     cta: 'Explore Deals'
   },
   {
     id: 3,
-    image: 'https://img.freepik.com/free-vector/flat-design-medical-twitch-banner_23-2149164384.jpg?semt=ais_incoming&w=740&q=80',
+    image: 'https://www.asclepiuswellness.com/img/slide/3-Sniss-Herbal.jpg',
     title: 'Consult with Experts',
     subtitle: 'Our licensed pharmacists are available 24/7 for your health needs.',
     cta: 'Ask a Pharmacist'
