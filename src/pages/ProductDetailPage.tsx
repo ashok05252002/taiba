@@ -1,15 +1,16 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Product } from '../types';
 import { useLanguage } from '../hooks/useLanguage';
 import ProductGrid from '../components/ProductGrid';
 import LoadingLottie from '../components/common/LoadingLottie';
-import { Star, AlertCircle } from 'lucide-react';
+import { Star, AlertCircle, ShoppingBag } from 'lucide-react';
 import { generateProducts, generateReviews } from '../utils/mockData';
 import AddToCartButton from '../components/common/AddToCartButton';
 import ProductInfoSection from '../components/product/ProductInfoSection';
 import CustomerReviews from '../components/product/CustomerReviews';
+import { useCart } from '../contexts/CartContext';
 
 const ProductDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -17,6 +18,8 @@ const ProductDetailPage: React.FC = () => {
   const [reviews, setReviews] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const { t } = useLanguage();
+  const { buyNow, triggerAnimation } = useCart();
+  const addToCartRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setLoading(true);
@@ -29,6 +32,16 @@ const ProductDetailPage: React.FC = () => {
       setLoading(false);
     }, 1000);
   }, [id]);
+
+  const handleBuyNow = () => {
+    if (product) {
+        if (addToCartRef.current) {
+            const rect = addToCartRef.current.getBoundingClientRect();
+            triggerAnimation(product.image, rect);
+        }
+        buyNow(product);
+    }
+  };
 
   if (loading) {
     return (
@@ -96,7 +109,18 @@ const ProductDetailPage: React.FC = () => {
             )}
 
             <div className="flex items-center space-x-4">
-              <AddToCartButton product={product} />
+              <div ref={addToCartRef}>
+                <AddToCartButton product={product} />
+              </div>
+              <motion.button
+                onClick={handleBuyNow}
+                className="bg-taiba-purple text-white rounded-full flex items-center justify-center space-x-2 px-6 py-2 h-10 font-semibold"
+                whileHover={{ scale: 1.05, boxShadow: '0px 4px 10px rgba(115, 38, 117, 0.4)' }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <ShoppingBag size={18} />
+                <span>Buy Now</span>
+              </motion.button>
             </div>
           </motion.div>
         </div>

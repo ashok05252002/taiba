@@ -76,6 +76,7 @@ const Header: React.FC<HeaderProps> = ({ deliveryMode, setDeliveryMode }) => {
             </motion.button>
             
             <div
+              id="header-cart-icon"
               className="relative hidden md:block"
               onMouseEnter={() => setIsCartOpen(true)}
               onMouseLeave={() => setIsCartOpen(false)}

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ShoppingCart, Plus, Minus } from 'lucide-react';
 import { Product } from '../../types';
@@ -10,18 +10,23 @@ interface AddToCartButtonProps {
 }
 
 const AddToCartButton: React.FC<AddToCartButtonProps> = ({ product }) => {
-  const { cartItems, addToCart, updateQuantity } = useCart();
+  const { cartItems, addToCart, updateQuantity, triggerAnimation } = useCart();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const buttonRef = useRef<HTMLButtonElement>(null);
 
   const itemInCart = cartItems.find(item => item.product.id === product.id);
   const quantityInCart = itemInCart ? itemInCart.quantity : 0;
 
-  const handleInitialAddToCart = (e: React.MouseEvent) => {
+  const handleInitialAddToCart = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     e.stopPropagation();
     if (product.prescriptionRequired) {
       setIsModalOpen(true);
     } else {
+      if (buttonRef.current) {
+        const rect = buttonRef.current.getBoundingClientRect();
+        triggerAnimation(product.image, rect);
+      }
       addToCart(product);
     }
   };
@@ -50,6 +55,7 @@ const AddToCartButton: React.FC<AddToCartButtonProps> = ({ product }) => {
           {quantityInCart === 0 ? (
             <motion.button
               key="add"
+              ref={buttonRef}
               onClick={handleInitialAddToCart}
               disabled={!product.inStock}
               className="absolute inset-0 bg-taiba-blue text-white rounded-full disabled:bg-gray-300 flex items-center justify-center space-x-2"

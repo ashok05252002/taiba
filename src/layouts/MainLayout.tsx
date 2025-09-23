@@ -12,6 +12,8 @@ import SideOfferBanner from '../components/common/SideOfferBanner';
 import AppDownloadBanner from '../components/common/AppDownloadBanner';
 import DeliveryModeModal from '../components/common/DeliveryModeModal';
 import { useOrder } from '../contexts/OrderContext';
+import FlyingImage from '../components/common/FlyingImage';
+import NotificationContainer from '../components/common/NotificationContainer';
 
 const MainLayout: React.FC = () => {
   const [isAuthModalOpen, setAuthModalOpen] = useState(false);
@@ -140,6 +142,8 @@ const MainLayout: React.FC = () => {
             onClose={() => setShowDeliveryModeModal(false)}
             onSelectMode={handleSelectDeliveryMode}
         />
+        <FlyingImage />
+        <NotificationContainer />
       </div>
     </div>
   );

@@ -20,35 +20,47 @@ import SupportPage from './pages/SupportPage';
 import ScrollToTop from './utils/ScrollToTop';
 import GiftCardPage from './pages/GiftCardPage';
 import NotFoundPage from './pages/NotFoundPage';
+import { LanguageProvider } from './contexts/LanguageContext';
+import { CartProvider } from './contexts/CartContext';
+import { OrderProvider } from './contexts/OrderContext';
+import { NotificationProvider } from './contexts/NotificationContext';
 
 function App() {
   return (
     <Router>
-      <ScrollToTop />
-      <Routes>
-        <Route path="/" element={<MainLayout />}>
-          <Route index element={<HomePage />} />
-          <Route path="products" element={<ProductListingPage />} />
-          <Route path="products/:id" element={<ProductDetailPage />} />
-          <Route path="cart" element={<CartPage />} />
-          <Route path="checkout" element={<CheckoutPage />} />
-          <Route path="order/:id" element={<OrderTrackingPage />} />
-          <Route path="order-confirmation" element={<OrderConfirmationPage />} />
-          <Route path="profile" element={<ProfilePage />} />
-          <Route path="about" element={<AboutUsPage />} />
-          <Route path="contact" element={<ContactPage />} />
-          <Route path="faq" element={<FaqPage />} />
-          <Route path="rewards" element={<RewardsPage />} />
-          <Route path="privacy-policy" element={<PolicyPage type="privacy" />} />
-          <Route path="terms-of-service" element={<PolicyPage type="terms" />} />
-          <Route path="refund-policy" element={<PolicyPage type="refund" />} />
-          <Route path="login" element={<LoginPage />} />
-          <Route path="signup" element={<SignupPage />} />
-          <Route path="support" element={<SupportPage />} />
-          <Route path="gift-cards" element={<GiftCardPage />} />
-          <Route path="*" element={<NotFoundPage />} />
-        </Route>
-      </Routes>
+      <LanguageProvider>
+        <NotificationProvider>
+          <CartProvider>
+            <OrderProvider>
+              <ScrollToTop />
+              <Routes>
+                <Route path="/" element={<MainLayout />}>
+                  <Route index element={<HomePage />} />
+                  <Route path="products" element={<ProductListingPage />} />
+                  <Route path="products/:id" element={<ProductDetailPage />} />
+                  <Route path="cart" element={<CartPage />} />
+                  <Route path="checkout" element={<CheckoutPage />} />
+                  <Route path="order/:id" element={<OrderTrackingPage />} />
+                  <Route path="order-confirmation" element={<OrderConfirmationPage />} />
+                  <Route path="profile" element={<ProfilePage />} />
+                  <Route path="about" element={<AboutUsPage />} />
+                  <Route path="contact" element={<ContactPage />} />
+                  <Route path="faq" element={<FaqPage />} />
+                  <Route path="rewards" element={<RewardsPage />} />
+                  <Route path="privacy-policy" element={<PolicyPage type="privacy" />} />
+                  <Route path="terms-of-service" element={<PolicyPage type="terms" />} />
+                  <Route path="refund-policy" element={<PolicyPage type="refund" />} />
+                  <Route path="login" element={<LoginPage />} />
+                  <Route path="signup" element={<SignupPage />} />
+                  <Route path="support" element={<SupportPage />} />
+                  <Route path="gift-cards" element={<GiftCardPage />} />
+                  <Route path="*" element={<NotFoundPage />} />
+                </Route>
+              </Routes>
+            </OrderProvider>
+          </CartProvider>
+        </NotificationProvider>
+      </LanguageProvider>
     </Router>
   );
 }

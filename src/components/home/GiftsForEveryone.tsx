@@ -1,21 +1,22 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import { ChevronLeft, ChevronRight, Gift } from 'lucide-react';
-import { Link } from 'react-router-dom';
-
+import GiftCardCustomizationModal from './GiftCardCustomizationModal';
 
 const giftCategories = [
-  { name: 'Colleague', image: '/images/colleague.png', slug: 'colleague' },
-  { name: 'Grandfather', image: '/images/grandfather.png', slug: 'grandfather' },
-  { name: 'Grandmother', image: '/images/grandmother.png', slug: 'grandmother' },
-  { name: 'Uncle', image: '/images/uncle.png', slug: 'uncle' },
-  { name: 'Aunt', image: '/images/aunt.png', slug: 'aunt' },
-  { name: 'Children', image: '/images/children.png', slug: 'children' },
+  { name: 'Colleague', image: 'https://images.pexels.com/photos/819530/pexels-photo-819530.jpeg?auto=compress&cs=tinysrgb&w=600', slug: 'colleague' },
+  { name: 'Grandfather', image: 'https://images.pexels.com/photos/1519192/pexels-photo-1519192.jpeg?auto=compress&cs=tinysrgb&w=600', slug: 'grandfather' },
+  { name: 'Grandmother', image: 'https://images.pexels.com/photos/5617830/pexels-photo-5617830.jpeg?auto=compress&cs=tinysrgb&w=600', slug: 'grandmother' },
+  { name: 'Dad', image: 'https://images.pexels.com/photos/7533320/pexels-photo-7533320.jpeg?auto=compress&cs=tinysrgb&w=600', slug: 'dad' },
+  { name: 'Mom', image: 'https://images.pexels.com/photos/18440384/pexels-photo-18440384.jpeg?auto=compress&cs=tinysrgb&w=600', slug: 'mom' },
+  { name: 'Children', image: 'https://images.pexels.com/photos/1556706/pexels-photo-1556706.jpeg?auto=compress&cs=tinysrgb&w=600', slug: 'children' },
   { name: 'Gift Card', isGiftCard: true, slug: 'gift-card' },
 ];
 
 const GiftsForEveryone: React.FC = () => {
     const scrollRef = useRef<HTMLDivElement>(null);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [selectedCategory, setSelectedCategory] = useState<(typeof giftCategories[0]) | null>(null);
 
     const scroll = (direction: 'left' | 'right') => {
         if (scrollRef.current) {
@@ -25,37 +26,49 @@ const GiftsForEveryone: React.FC = () => {
         }
     };
 
-    return (
-        <section className="py-16 bg-white overflow-hidden">
-            <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
-                <motion.div
-                    className="text-center mb-12"
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.6 }}
-                >
-                    <h2 className="text-3xl md:text-4xl font-bold text-taiba-purple mb-4">Gifts for Everyone</h2>
-                    <p className="text-lg text-taiba-grey max-w-2xl mx-auto">
-                        Find the perfect gift of health for your loved ones.
-                    </p>
-                </motion.div>
+    const handleCardClick = (category: typeof giftCategories[0]) => {
+        setSelectedCategory(category);
+        setIsModalOpen(true);
+    };
 
-                <div className="relative">
-                    <motion.button 
-                        onClick={() => scroll('left')}
-                        className="absolute -left-2 top-1/2 -translate-y-1/2 z-10 bg-white rounded-full p-2 shadow-md hover:bg-gray-100 hidden md:flex"
-                        whileHover={{ scale: 1.1 }}
-                        whileTap={{ scale: 0.9 }}
+    return (
+        <>
+            <GiftCardCustomizationModal
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                category={selectedCategory}
+            />
+            <section className="py-16 bg-white overflow-hidden">
+                <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <motion.div
+                        className="text-center mb-12"
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.6 }}
                     >
-                        <ChevronLeft />
-                    </motion.button>
-                    <div ref={scrollRef} className="flex overflow-x-auto space-x-6 py-4 scrollbar-hide">
-                        {giftCategories.map((cat) => {
-                            const cardContent = (
+                        <h2 className="text-3xl md:text-4xl font-bold text-taiba-purple mb-4">Gifts for Everyone</h2>
+                        <p className="text-lg text-taiba-grey max-w-2xl mx-auto">
+                            Find the perfect gift of health for your loved ones.
+                        </p>
+                    </motion.div>
+
+                    <div className="relative">
+                        <motion.button 
+                            onClick={() => scroll('left')}
+                            className="absolute -left-2 top-1/2 -translate-y-1/2 z-10 bg-white rounded-full p-2 shadow-md hover:bg-gray-100 hidden md:flex"
+                            whileHover={{ scale: 1.1 }}
+                            whileTap={{ scale: 0.9 }}
+                        >
+                            <ChevronLeft />
+                        </motion.button>
+                        <div ref={scrollRef} className="flex overflow-x-auto space-x-6 py-4 scrollbar-hide">
+                            {giftCategories.map((cat) => (
                                 <motion.div
+                                    key={cat.slug}
                                     className="flex-shrink-0 w-48 text-center cursor-pointer group"
                                     whileHover={{ y: -5 }}
+                                    onClick={() => handleCardClick(cat)}
                                 >
                                     <div className="relative w-40 h-48 mx-auto">
                                         <div className="absolute inset-x-0 top-0 h-40 bg-taiba-wheat/30 rounded-full"></div>
@@ -74,26 +87,20 @@ const GiftsForEveryone: React.FC = () => {
                                         {cat.name}
                                     </p>
                                 </motion.div>
-                            );
-
-                            if (cat.isGiftCard) {
-                                return <Link to="/gift-cards" key={cat.slug}>{cardContent}</Link>;
-                            } else {
-                                return <Link to={`/products?category=gifts-for-${cat.slug}`} key={cat.slug}>{cardContent}</Link>;
-                            }
-                        })}
+                            ))}
+                        </div>
+                        <motion.button 
+                            onClick={() => scroll('right')}
+                            className="absolute -right-2 top-1/2 -translate-y-1/2 z-10 bg-white rounded-full p-2 shadow-md hover:bg-gray-100 hidden md:flex"
+                            whileHover={{ scale: 1.1 }}
+                            whileTap={{ scale: 0.9 }}
+                        >
+                            <ChevronRight />
+                        </motion.button>
                     </div>
-                    <motion.button 
-                        onClick={() => scroll('right')}
-                        className="absolute -right-2 top-1/2 -translate-y-1/2 z-10 bg-white rounded-full p-2 shadow-md hover:bg-gray-100 hidden md:flex"
-                        whileHover={{ scale: 1.1 }}
-                        whileTap={{ scale: 0.9 }}
-                    >
-                        <ChevronRight />
-                    </motion.button>
                 </div>
-            </div>
-        </section>
+            </section>
+        </>
     );
 };
 
