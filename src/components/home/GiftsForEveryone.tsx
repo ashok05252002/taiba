@@ -7,8 +7,8 @@ import { Link } from 'react-router-dom';
 const giftCategories = [
   { name: 'Colleague', image: '/images/colleague.png', slug: 'colleague' },
   { name: 'Grandfather', image: '/images/grandfather.png', slug: 'grandfather' },
-  { name: 'Grandmother', image: 'public/images/grandmother.png', slug: 'grandmother' },
-  { name: 'Uncle', image: 'public/images/uncle.png', slug: 'uncle' },
+  { name: 'Grandmother', image: '/images/grandmother.png', slug: 'grandmother' },
+  { name: 'Uncle', image: '/images/uncle.png', slug: 'uncle' },
   { name: 'Aunt', image: '/images/aunt.png', slug: 'aunt' },
   { name: 'Children', image: '/images/children.png', slug: 'children' },
   { name: 'Gift Card', isGiftCard: true, slug: 'gift-card' },
