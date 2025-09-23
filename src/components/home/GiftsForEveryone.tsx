@@ -3,13 +3,14 @@ import { motion } from 'framer-motion';
 import { ChevronLeft, ChevronRight, Gift } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
+
 const giftCategories = [
-  { name: 'Colleague', image: 'https://images.pexels.com/photos/819530/pexels-photo-819530.jpeg?auto=compress&cs=tinysrgb&w=600', slug: 'colleague' },
-  { name: 'Grandfather', image: 'https://images.pexels.com/photos/1519192/pexels-photo-1519192.jpeg?auto=compress&cs=tinysrgb&w=600', slug: 'grandfather' },
-  { name: 'Grandmother', image: 'https://images.pexels.com/photos/5617830/pexels-photo-5617830.jpeg?auto=compress&cs=tinysrgb&w=600', slug: 'grandmother' },
-  { name: 'Uncle', image: 'https://images.pexels.com/photos/7533320/pexels-photo-7533320.jpeg?auto=compress&cs=tinysrgb&w=600', slug: 'uncle' },
-  { name: 'Aunt', image: 'https://images.pexels.com/photos/18440384/pexels-photo-18440384.jpeg?auto=compress&cs=tinysrgb&w=600', slug: 'aunt' },
-  { name: 'Children', image: 'https://images.pexels.com/photos/1556706/pexels-photo-1556706.jpeg?auto=compress&cs=tinysrgb&w=600', slug: 'children' },
+  { name: 'Colleague', image: '/images/colleague.png', slug: 'colleague' },
+  { name: 'Grandfather', image: '/images/grandfather.png', slug: 'grandfather' },
+  { name: 'Grandmother', image: 'public/images/grandmother.png', slug: 'grandmother' },
+  { name: 'Uncle', image: 'public/images/uncle.png', slug: 'uncle' },
+  { name: 'Aunt', image: '/images/aunt.png', slug: 'aunt' },
+  { name: 'Children', image: '/images/children.png', slug: 'children' },
   { name: 'Gift Card', isGiftCard: true, slug: 'gift-card' },
 ];
 
