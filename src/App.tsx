@@ -18,6 +18,8 @@ import LoginPage from './pages/LoginPage';
 import SignupPage from './pages/SignupPage';
 import SupportPage from './pages/SupportPage';
 import ScrollToTop from './utils/ScrollToTop';
+import GiftCardPage from './pages/GiftCardPage';
+import NotFoundPage from './pages/NotFoundPage';
 
 function App() {
   return (
@@ -43,6 +45,8 @@ function App() {
           <Route path="login" element={<LoginPage />} />
           <Route path="signup" element={<SignupPage />} />
           <Route path="support" element={<SupportPage />} />
+          <Route path="gift-cards" element={<GiftCardPage />} />
+          <Route path="*" element={<NotFoundPage />} />
         </Route>
       </Routes>
     </Router>

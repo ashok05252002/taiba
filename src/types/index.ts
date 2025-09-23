@@ -11,6 +11,10 @@ export interface Product {
   description: string;
   dosage?: string;
   tags?: string[];
+  keyFeatures: string[];
+  benefits: string[];
+  activeIngredients: { name: string; benefit: string; }[];
+  directionsForUse: string;
 }
 
 export interface CartItem {

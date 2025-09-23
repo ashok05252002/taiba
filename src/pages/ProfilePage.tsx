@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { User, ShoppingBag, Heart, Settings, Award, MapPin, LogOut } from 'lucide-react';
+import { User, ShoppingBag, Heart, Settings, Award, MapPin, LogOut, Gift } from 'lucide-react';
 import OrderHistory from '../components/profile/OrderHistory';
 import Wishlist from '../components/profile/Wishlist';
 import ProfileSettings from '../components/profile/ProfileSettings';
 import LoyaltyPoints from '../components/profile/LoyaltyPoints';
 import ManageAddresses from '../components/profile/ManageAddresses';
+import MyGiftCards from '../components/profile/MyGiftCards';
 
-type ProfileTab = 'orders' | 'wishlist' | 'settings' | 'addresses' | 'rewards';
+type ProfileTab = 'orders' | 'wishlist' | 'settings' | 'addresses' | 'rewards' | 'gift-cards';
 
 const ProfilePage: React.FC = () => {
     const [activeTab, setActiveTab] = useState<ProfileTab>('orders');
@@ -24,6 +25,8 @@ const ProfilePage: React.FC = () => {
                 return <ManageAddresses />;
             case 'rewards':
                 return <LoyaltyPoints />;
+            case 'gift-cards':
+                return <MyGiftCards />;
             default:
                 return null;
         }
@@ -33,6 +36,7 @@ const ProfilePage: React.FC = () => {
         { id: 'orders', name: 'My Orders', icon: ShoppingBag },
         { id: 'wishlist', name: 'Wishlist', icon: Heart },
         { id: 'rewards', name: 'Loyalty & Rewards', icon: Award },
+        { id: 'gift-cards', name: 'My Gift Cards', icon: Gift },
         { id: 'addresses', name: 'Manage Addresses', icon: MapPin },
         { id: 'settings', name: 'Account Settings', icon: Settings },
     ];

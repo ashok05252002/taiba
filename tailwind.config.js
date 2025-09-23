@@ -12,6 +12,7 @@ module.exports = {
         'taiba-grey': '#696969',
         'taiba-mustard': '#FFC600',
         'taiba-pistachio': '#BCE268',
+        'taiba-wheat': '#F5DEB3',
       },
       fontFamily: {
         'sans': ['Montserrat', 'Tajawal', 'Noto Naskh Arabic', 'system-ui', 'sans-serif'],

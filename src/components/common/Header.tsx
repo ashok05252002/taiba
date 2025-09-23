@@ -5,8 +5,15 @@ import { Search, User, Menu, X, Globe, ShoppingCart } from 'lucide-react';
 import { useLanguage } from '../../hooks/useLanguage';
 import { useCart } from '../../contexts/CartContext';
 import MiniCart from './MiniCart';
+import DeliveryModeSelector from './DeliveryModeSelector';
+import LocationSelector from './LocationSelector';
 
-const Header: React.FC = () => {
+interface HeaderProps {
+    deliveryMode: 'delivery' | 'takeaway';
+    setDeliveryMode: (mode: 'delivery' | 'takeaway') => void;
+}
+
+const Header: React.FC<HeaderProps> = ({ deliveryMode, setDeliveryMode }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const { toggleLanguage, t, isRTL, currentLanguage } = useLanguage();
@@ -21,20 +28,26 @@ const Header: React.FC = () => {
     >
       <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-20">
-          {/* Logo */}
-          <Link to="/">
-            <motion.div
-              className="flex-shrink-0 flex items-center"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <img
-                src="https://taibarare.com/wp-content/themes/taiba/assets/img/home/footer/TAIBA%20ACCESS%20RARE%20FOOTER%20LOGO_.png"
-                alt="Taiba Pharmacy"
-                className="h-12 w-auto"
-              />
-            </motion.div>
-          </Link>
+          {/* Left Side */}
+          <div className="flex items-center space-x-4">
+            <Link to="/">
+              <motion.div
+                className="flex-shrink-0 flex items-center"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <img
+                  src="https://taibarare.com/wp-content/themes/taiba/assets/img/home/footer/TAIBA%20ACCESS%20RARE%20FOOTER%20LOGO_.png"
+                  alt="Taiba Pharmacy"
+                  className="h-12 w-auto"
+                />
+              </motion.div>
+            </Link>
+            <div className="hidden lg:flex items-center space-x-4">
+                <DeliveryModeSelector mode={deliveryMode} setMode={setDeliveryMode} />
+                <LocationSelector mode={deliveryMode} />
+            </div>
+          </div>
 
           {/* Search Bar - Desktop */}
           <div className="hidden md:flex flex-1 max-w-xl mx-8">
@@ -50,7 +63,6 @@ const Header: React.FC = () => {
 
           {/* Right Icons */}
           <div className="flex items-center space-x-2 sm:space-x-4">
-            {/* Language Toggle */}
             <motion.button
               onClick={toggleLanguage}
               className="flex items-center space-x-2 px-3 py-2 rounded-full hover:bg-gray-100 transition-colors"
@@ -63,7 +75,6 @@ const Header: React.FC = () => {
               </span>
             </motion.button>
             
-            {/* Cart */}
             <div
               className="relative hidden md:block"
               onMouseEnter={() => setIsCartOpen(true)}
@@ -86,7 +97,6 @@ const Header: React.FC = () => {
               {isCartOpen && <MiniCart />}
             </div>
 
-            {/* Profile */}
             <Link to="/profile">
                 <motion.button
                 className="p-2 rounded-full hover:bg-gray-100"
@@ -97,7 +107,6 @@ const Header: React.FC = () => {
                 </motion.button>
             </Link>
 
-            {/* Mobile Menu Toggle */}
             <motion.button
               className="md:hidden p-2"
               onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -109,7 +118,6 @@ const Header: React.FC = () => {
           </div>
         </div>
 
-        {/* Mobile Menu & Search */}
         {isMenuOpen && (
           <motion.div
             className="md:hidden py-4 border-t"

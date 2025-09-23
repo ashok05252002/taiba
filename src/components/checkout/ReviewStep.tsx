@@ -2,20 +2,23 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { useCart } from '../../contexts/CartContext';
 import { Link } from 'react-router-dom';
+import { useOrder } from '../../contexts/OrderContext';
 
 interface ReviewStepProps {
     onBack: () => void;
+    giftCardDiscount: number;
 }
 
-const ReviewStep: React.FC<ReviewStepProps> = ({ onBack }) => {
+const ReviewStep: React.FC<ReviewStepProps> = ({ onBack, giftCardDiscount }) => {
     const { cartItems, cartTotal } = useCart();
-    const finalTotal = cartTotal * 1.05; // Assuming 5% tax
+    const { deliveryMode, selectedStore, shippingAddress } = useOrder();
+    const taxes = cartTotal * 0.05;
+    const finalTotal = cartTotal + taxes - giftCardDiscount;
 
     return (
         <div className="bg-white p-8 rounded-2xl shadow-lg">
             <h2 className="text-xl font-semibold mb-6">Review Your Order</h2>
             
-            {/* Order Items */}
             <div className="space-y-4 mb-6 border-b pb-4">
                 {cartItems.map(item => (
                     <div key={item.product.id} className="flex justify-between items-center">
@@ -31,22 +34,30 @@ const ReviewStep: React.FC<ReviewStepProps> = ({ onBack }) => {
                 ))}
             </div>
 
-            {/* Details */}
             <div className="space-y-4 mb-6">
-                <div>
-                    <h3 className="font-semibold">Shipping To:</h3>
-                    <p className="text-taiba-grey">Ahmed Ali, 123 Al Khuwair St, Muscat, 111</p>
-                </div>
+                {deliveryMode === 'delivery' ? (
+                    <div>
+                        <h3 className="font-semibold">Shipping To:</h3>
+                        <p className="text-taiba-grey">{shippingAddress?.name}, {shippingAddress?.address}</p>
+                    </div>
+                ) : (
+                    <div>
+                        <h3 className="font-semibold">Pickup From:</h3>
+                        <p className="text-taiba-grey">{selectedStore?.name}, {selectedStore?.address}</p>
+                    </div>
+                )}
                 <div>
                     <h3 className="font-semibold">Payment Method:</h3>
                     <p className="text-taiba-grey">Credit Card ending in **** 1234</p>
                 </div>
             </div>
 
-            {/* Total */}
             <div className="space-y-2">
                 <div className="flex justify-between text-taiba-grey"><span>Subtotal</span><span>OMR {cartTotal.toFixed(2)}</span></div>
-                <div className="flex justify-between text-taiba-grey"><span>Taxes (5%)</span><span>OMR {(cartTotal * 0.05).toFixed(2)}</span></div>
+                <div className="flex justify-between text-taiba-grey"><span>Taxes (5%)</span><span>OMR {taxes.toFixed(2)}</span></div>
+                {giftCardDiscount > 0 && (
+                    <div className="flex justify-between text-green-600"><span>Gift Card</span><span>- OMR {giftCardDiscount.toFixed(2)}</span></div>
+                )}
                 <div className="flex justify-between font-bold text-lg mt-2 pt-2 border-t"><span>Total</span><span>OMR {finalTotal.toFixed(2)}</span></div>
             </div>
 

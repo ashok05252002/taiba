@@ -12,7 +12,10 @@ import SkincareOfferBanner from '../components/home/banners/SkincareOfferBanner'
 import BabyCareOfferBanner from '../components/home/banners/BabyCareOfferBanner';
 import WellnessOfferBanner from '../components/home/banners/WellnessOfferBanner';
 import MedicalBackground from '../components/background/MedicalBackground';
+import HomeLoyaltyCard from '../components/home/HomeLoyaltyCard';
 import { motion } from 'framer-motion';
+import GiftCardSection from '../components/home/GiftCardSection';
+import GiftsForEveryone from '../components/home/GiftsForEveryone';
 
 const HomePage: React.FC = () => {
   return (
@@ -21,6 +24,7 @@ const HomePage: React.FC = () => {
         <BannerCarousel />
       </div>
       <TrustBar />
+      <HomeLoyaltyCard />
       <HomeTopCategories />
       
       <section className="relative bg-white py-16 overflow-hidden">
@@ -35,8 +39,12 @@ const HomePage: React.FC = () => {
             <BestSellers />
         </motion.div>
       </section>
+
+      <PopularBrands />
       
       <SkincareOfferBanner />
+      
+      <GiftsForEveryone />
 
       <section className="relative bg-gray-50 py-16 overflow-hidden">
         <MedicalBackground theme="shop" />
@@ -67,6 +75,8 @@ const HomePage: React.FC = () => {
         </motion.div>
       </section>
 
+      <GiftCardSection />
+
       <WellnessOfferBanner />
       
       <section className="relative bg-taiba-mustard/10 py-16 overflow-hidden">
@@ -75,8 +85,6 @@ const HomePage: React.FC = () => {
             <RecommendedForYou />
         </div>
       </section>
-
-      <PopularBrands />
     </div>
   );
 };

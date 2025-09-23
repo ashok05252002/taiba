@@ -1,5 +1,5 @@
 import { faker } from '@faker-js/faker';
-import { Product, OrderStatus } from '../types';
+import { Product } from '../types';
 
 const imageUrls = {
   Medicines: [
@@ -107,12 +107,30 @@ export const generateProducts = (count: number, options?: GenerationOptions): Pr
             originalPrice: hasDiscount ? parseFloat(originalPrice.toFixed(2)) : undefined,
             image: image,
             category: category,
-            prescriptionRequired: category === 'Medicines' ? faker.datatype.boolean({ probability: 0.3 }) : false,
+            prescriptionRequired: category === 'Medicines' ? faker.datatype.boolean({ probability: 0.4 }) : false,
             inStock: faker.datatype.boolean({ probability: 0.9 }),
             rating: parseFloat(faker.number.float({ min: 3.8, max: 5, fractionDigits: 1 }).toFixed(1)),
-            description: faker.lorem.paragraphs(3),
+            description: "CeraVe Foaming Cleanser for Normal to Oily Skin is specially formulated to cleanse and hydrate, effectively removing dirt, oil, and impurities.",
             dosage: 'Take one tablet twice a day, or as directed by your physician.',
             tags: options?.tags || [],
+            keyFeatures: [
+                "Hydrating Ingredients",
+                "Suitable for Sensitive Skin",
+                "Fragrance-Free",
+                "Dermatologist Recommended",
+            ],
+            benefits: [
+                "Thoroughly cleanses without stripping moisture",
+                "Hydrates and nourishes the skin",
+                "Gentle for daily use",
+                "Leaves skin feeling fresh and revitalized",
+            ],
+            activeIngredients: [
+                { name: 'Hyaluronic Acid', benefit: 'Attracts moisture to the skin' },
+                { name: 'Ceramides', benefit: "Restores the skin's natural barrier" },
+                { name: 'Niacinamide', benefit: 'Soothes and calms the skin' },
+            ],
+            directionsForUse: "Wet your face with lukewarm water. Apply a small amount of cleanser to your hands and work into a lather. Gently massage onto your face, avoiding the eye area.",
         };
     });
 };
@@ -139,5 +157,33 @@ export const generateAddresses = (count: number) => {
         name: faker.person.fullName(),
         address: `${faker.location.streetAddress()}, ${faker.location.city()}`,
         phone: faker.phone.number(),
+    }));
+};
+
+export const storeLocations = [
+    { id: 'store1', name: 'Muscat Grand Mall', address: 'Al Khuwair, Muscat' },
+    { id: 'store2', name: 'Salalah Gardens Mall', address: 'Salalah' },
+    { id: 'store3', name: 'Sohar City Centre', address: 'Sohar' },
+    { id: 'store4', name: 'Nizwa Grand Mall', address: 'Nizwa' },
+];
+
+export const generateReviews = (count: number) => {
+    return Array.from({ length: count }, () => ({
+        id: faker.string.uuid(),
+        author: faker.person.fullName(),
+        avatar: faker.image.avatar(),
+        rating: faker.number.int({ min: 3, max: 5 }),
+        date: faker.date.recent({ days: 30 }).toLocaleDateString(),
+        comment: faker.lorem.paragraph(),
+    }));
+};
+
+export const generateGiftCards = (count: number) => {
+    return Array.from({ length: count }, () => ({
+        id: faker.string.uuid(),
+        code: `TAIBA-${faker.string.alphanumeric(8).toUpperCase()}`,
+        initialValue: faker.helpers.arrayElement([10, 25, 50, 100]),
+        currentBalance: faker.number.float({ min: 0, max: 50, fractionDigits: 2 }),
+        purchaseDate: faker.date.past({ years: 1 }).toLocaleDateString(),
     }));
 };

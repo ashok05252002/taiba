@@ -10,6 +10,8 @@ import MedicalBackground from '../components/background/MedicalBackground';
 import PromotionalToast from '../components/common/PromotionalToast';
 import SideOfferBanner from '../components/common/SideOfferBanner';
 import AppDownloadBanner from '../components/common/AppDownloadBanner';
+import DeliveryModeModal from '../components/common/DeliveryModeModal';
+import { useOrder } from '../contexts/OrderContext';
 
 const MainLayout: React.FC = () => {
   const [isAuthModalOpen, setAuthModalOpen] = useState(false);
@@ -19,6 +21,9 @@ const MainLayout: React.FC = () => {
   const [isSideBannerClosed, setIsSideBannerClosed] = useState(false);
   const [showAppBanner, setShowAppBanner] = useState(false);
   const [isAppBannerClosed, setIsAppBannerClosed] = useState(false);
+
+  const { deliveryMode, setDeliveryMode, deliveryModeChosen, setDeliveryModeChosen } = useOrder();
+  const [showDeliveryModeModal, setShowDeliveryModeModal] = useState(false);
 
   const [initialAuthModalShown, setInitialAuthModalShown] = useState(false);
   const authIntervalRef = useRef<NodeJS.Timeout | null>(null);
@@ -68,6 +73,12 @@ const MainLayout: React.FC = () => {
             setShowSideBanner(true);
         }
     }, 20000);
+    
+    const deliveryModeTimer = setTimeout(() => {
+        if (!deliveryModeChosen) {
+            setShowDeliveryModeModal(true);
+        }
+    }, 20000);
 
     const appBannerTimer = setTimeout(() => {
         if (!isAppBannerClosed) {
@@ -79,8 +90,9 @@ const MainLayout: React.FC = () => {
         clearTimeout(toastTimer);
         clearTimeout(sideBannerTimer);
         clearTimeout(appBannerTimer);
+        clearTimeout(deliveryModeTimer);
     };
-  }, [isSideBannerClosed, isAppBannerClosed]);
+  }, [isSideBannerClosed, isAppBannerClosed, deliveryModeChosen]);
 
   const handleCloseSideBanner = () => {
     setShowSideBanner(false);
@@ -90,6 +102,12 @@ const MainLayout: React.FC = () => {
   const handleCloseAppBanner = () => {
     setShowAppBanner(false);
     setIsAppBannerClosed(true);
+  };
+
+  const handleSelectDeliveryMode = (mode: 'delivery' | 'takeaway') => {
+    setDeliveryMode(mode);
+    setDeliveryModeChosen(true);
+    setShowDeliveryModeModal(false);
   };
 
   const getBackgroundTheme = () => {
@@ -103,11 +121,11 @@ const MainLayout: React.FC = () => {
     <div className="min-h-screen bg-gray-50 flex flex-col relative overflow-x-hidden">
       {!isHomePage && <MedicalBackground theme={getBackgroundTheme()} />}
       <div className="relative z-10 flex flex-col flex-grow">
-        <div className="sticky top-0 z-40">
-          <Header />
+        <div className="fixed top-0 left-0 right-0 z-40">
+          <Header deliveryMode={deliveryMode} setDeliveryMode={handleSelectDeliveryMode} />
           <SubHeader />
         </div>
-        <main className="flex-grow">
+        <main className="flex-grow pt-[124px]">
           <Outlet />
         </main>
         <WhatsAppFloat />
@@ -117,6 +135,11 @@ const MainLayout: React.FC = () => {
         <PromotionalToast isVisible={showToast} />
         <SideOfferBanner isVisible={showSideBanner} onClose={handleCloseSideBanner} />
         <AppDownloadBanner isVisible={showAppBanner} onClose={handleCloseAppBanner} />
+        <DeliveryModeModal 
+            isOpen={showDeliveryModeModal} 
+            onClose={() => setShowDeliveryModeModal(false)}
+            onSelectMode={handleSelectDeliveryMode}
+        />
       </div>
     </div>
   );
