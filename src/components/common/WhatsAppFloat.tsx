@@ -29,9 +29,9 @@ const WhatsAppFloat: React.FC = () => {
           transition={{ duration: 2, repeat: Infinity }}
         >
           <img
-            src="/assets/images/icons/whatsapp.png"
+            src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/WhatsApp.svg/512px-WhatsApp.svg.png?20220228223904"
             alt="WhatsApp"
-            className="w-8 h-8"
+            className="w-9 h-9"
           />
         </motion.div>
       </motion.a>

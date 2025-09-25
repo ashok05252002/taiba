@@ -187,3 +187,34 @@ export const generateGiftCards = (count: number) => {
         purchaseDate: faker.date.past({ years: 1 }).toLocaleDateString(),
     }));
 };
+
+export const giftCardThemes: Record<string, { image: string; quote: string }> = {
+  dad: {
+    image: 'https://images.pexels.com/photos/3768894/pexels-photo-3768894.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
+    quote: 'For the best Dad in the world.',
+  },
+  mom: {
+    image: 'https://images.pexels.com/photos/4061542/pexels-photo-4061542.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
+    quote: 'Thank you for everything, Mom.',
+  },
+  colleague: {
+    image: 'https://images.pexels.com/photos/3184418/pexels-photo-3184418.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
+    quote: 'Great working with you!',
+  },
+  grandfather: {
+    image: 'https://images.pexels.com/photos/8711333/pexels-photo-8711333.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
+    quote: 'To a legendary Grandfather.',
+  },
+  grandmother: {
+    image: 'https://images.pexels.com/photos/3768131/pexels-photo-3768131.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
+    quote: 'With love, for Grandma.',
+  },
+  children: {
+    image: 'https://images.pexels.com/photos/8471796/pexels-photo-8471796.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
+    quote: 'A special treat for you!',
+  },
+  default: {
+    image: 'https://images.pexels.com/photos/4348401/pexels-photo-4348401.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
+    quote: 'The perfect gift of health.',
+  },
+};
