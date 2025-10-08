@@ -41,10 +41,14 @@ const OrderHistory = () => {
                                 </div>
                             </div>
                         </div>
-                        <div className="flex space-x-2 mt-3">
-                            {order.items.map(item => (
-                                <img key={item.id} src={item.image} alt={item.name} className="w-12 h-12 rounded-md object-cover border" />
-                            ))}
+                        <div className="border-t my-3"></div>
+                        <div className="flex items-center space-x-3">
+                            <p className="text-sm font-medium">Items:</p>
+                            <div className="flex space-x-2">
+                                {order.items.map(item => (
+                                    <img key={item.id} src={item.image} alt={item.name} title={item.name} className="w-12 h-12 rounded-md object-cover border" />
+                                ))}
+                            </div>
                         </div>
                     </motion.div>
                 ))}

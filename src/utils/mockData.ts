@@ -100,6 +100,10 @@ export const generateProducts = (count: number, options?: GenerationOptions): Pr
         const hasDiscount = options?.isDeal || faker.datatype.boolean({ probability: 0.3 });
         const price = hasDiscount ? originalPrice * faker.number.float({ min: 0.5, max: 0.8, fractionDigits: 2 }) : originalPrice;
 
+        const requiresPrescription = category === 'Medicines'
+            ? faker.datatype.boolean({ probability: 0.5 })
+            : false;
+
         return {
             id: faker.string.uuid(),
             name: faker.commerce.productName(),
@@ -107,8 +111,9 @@ export const generateProducts = (count: number, options?: GenerationOptions): Pr
             originalPrice: hasDiscount ? parseFloat(originalPrice.toFixed(2)) : undefined,
             image: image,
             category: category,
-            prescriptionRequired: category === 'Medicines' ? faker.datatype.boolean({ probability: 0.4 }) : false,
+            prescriptionRequired: requiresPrescription,
             inStock: faker.datatype.boolean({ probability: 0.9 }),
+            stock: faker.number.int({ min: 0, max: 200 }),
             rating: parseFloat(faker.number.float({ min: 3.8, max: 5, fractionDigits: 1 }).toFixed(1)),
             description: "CeraVe Foaming Cleanser for Normal to Oily Skin is specially formulated to cleanse and hydrate, effectively removing dirt, oil, and impurities.",
             dosage: 'Take one tablet twice a day, or as directed by your physician.',
@@ -131,8 +136,54 @@ export const generateProducts = (count: number, options?: GenerationOptions): Pr
                 { name: 'Niacinamide', benefit: 'Soothes and calms the skin' },
             ],
             directionsForUse: "Wet your face with lukewarm water. Apply a small amount of cleanser to your hands and work into a lather. Gently massage onto your face, avoiding the eye area.",
+            expiryDate: faker.date.future({ years: 2 }).toISOString(),
         };
     });
+};
+
+// MOVED UP to fix initialization error
+export const generateDeliveryPartners = (count: number) => {
+    return Array.from({ length: count }, () => ({
+        id: faker.string.uuid(),
+        name: faker.person.fullName(),
+        email: faker.internet.email(),
+        avatar: faker.image.avatar(),
+        status: faker.helpers.arrayElement(['On-Duty', 'Offline', 'Blocked']),
+        zone: faker.location.city(),
+        rating: faker.number.float({ min: 4, max: 5, fractionDigits: 1 }),
+        totalDeliveries: faker.number.int({ min: 50, max: 500 }),
+        onTimeRate: faker.number.float({ min: 90, max: 99, fractionDigits: 1 }),
+        joinedDate: faker.date.past({ years: 2 }).toLocaleDateString(),
+        // The circular dependency is broken by generating history on the fly in the detail page, or by generating it after all lists are created.
+        // For now, we can create orders without partners, then link them.
+        // To fix the immediate error, we must avoid calling generateAdminOrders here.
+        deliveryHistory: [] 
+    }));
+};
+
+// MOVED UP
+export const deliveryPartnersList = [
+    ...generateDeliveryPartners(5),
+    { id: 'unassigned', name: 'Unassigned', email: '', avatar: '', status: 'Offline', zone: '', rating: 0, totalDeliveries: 0, onTimeRate: 0, joinedDate: '', deliveryHistory: [] }
+];
+
+export const generateAdminOrders = (count: number) => {
+    return Array.from({ length: count }, () => ({
+        id: `TP${faker.number.int({ min: 100000, max: 999999 })}`,
+        customer: {
+            name: faker.person.fullName(),
+            email: faker.internet.email(),
+            avatar: faker.image.avatar(),
+        },
+        date: faker.date.recent({ days: 30 }).toISOString(),
+        total: faker.commerce.price({ min: 10, max: 300 }),
+        status: faker.helpers.arrayElement(['Pending', 'Processing', 'Shipped', 'Delivered', 'Cancelled']),
+        items: generateProducts(faker.number.int({ min: 1, max: 5 })),
+        shippingAddress: `${faker.location.streetAddress()}, ${faker.location.city()}`,
+        paymentMethod: faker.helpers.arrayElement(['Credit Card', 'COD', 'Wallet']),
+        deliveryPartner: faker.helpers.arrayElement(deliveryPartnersList),
+        branch: faker.helpers.arrayElement(storeLocations.map(s => ({id: s.id, name: s.name, address: s.address}))),
+    }));
 };
 
 export const generateOrderHistory = (count: number) => {
@@ -160,12 +211,113 @@ export const generateAddresses = (count: number) => {
     }));
 };
 
+const generateStoreStaff = (count: number) => {
+    return Array.from({ length: count }, () => ({
+        id: faker.string.uuid(),
+        name: faker.person.fullName(),
+        role: faker.helpers.arrayElement(['Pharmacist', 'Manager', 'Cashier', 'Technician']),
+        phone: faker.phone.number(),
+    }));
+};
+
+const generateStoreDocuments = () => {
+    return [
+        { id: 'doc1', name: 'Pharmacy License', status: 'Active', expiry: faker.date.future({ years: 1 }).toLocaleDateString() },
+        { id: 'doc2', name: 'Commercial Registration', status: 'Active', expiry: faker.date.future({ years: 2 }).toLocaleDateString() },
+        { id: 'doc3', name: 'Civil Defense Certificate', status: 'Expires Soon', expiry: faker.date.future({ months: 2 }).toLocaleDateString() },
+    ];
+};
+
 export const storeLocations = [
-    { id: 'store1', name: 'Muscat Grand Mall', address: 'Al Khuwair, Muscat' },
-    { id: 'store2', name: 'Salalah Gardens Mall', address: 'Salalah' },
-    { id: 'store3', name: 'Sohar City Centre', address: 'Sohar' },
-    { id: 'store4', name: 'Nizwa Grand Mall', address: 'Nizwa' },
+    { 
+        id: 'store1', 
+        name: 'Muscat Grand Mall', 
+        address: 'Al Khuwair, Muscat', 
+        phone: faker.phone.number(), 
+        hours: '10am - 10pm', 
+        stockStatus: 'High', 
+        zone: 'Muscat Central', 
+        totalProducts: 1250, 
+        staffCount: 8, 
+        inventory: generateProducts(50), 
+        staff: generateStoreStaff(8),
+        performance: { revenue: 12450, orderCount: 150 },
+        documents: generateStoreDocuments(),
+        status: 'Open' as const,
+        branchCode: 'MCT-01',
+        dateOpened: '2015-03-10',
+    },
+    { 
+        id: 'store2', 
+        name: 'Salalah Gardens Mall', 
+        address: 'Salalah', 
+        phone: faker.phone.number(), 
+        hours: '10am - 10pm', 
+        stockStatus: 'Medium', 
+        zone: 'Dhofar', 
+        totalProducts: 800, 
+        staffCount: 6, 
+        inventory: generateProducts(40),
+        staff: generateStoreStaff(6),
+        performance: { revenue: 8900, orderCount: 95 },
+        documents: generateStoreDocuments(),
+        status: 'Open' as const,
+        branchCode: 'SLL-01',
+        dateOpened: '2018-09-22',
+    },
+    { 
+        id: 'store3', 
+        name: 'Sohar City Centre', 
+        address: 'Sohar', 
+        phone: faker.phone.number(), 
+        hours: '10am - 10pm', 
+        stockStatus: 'High', 
+        zone: 'Al Batinah North', 
+        totalProducts: 1100, 
+        staffCount: 7, 
+        inventory: generateProducts(45),
+        staff: generateStoreStaff(7),
+        performance: { revenue: 10500, orderCount: 120 },
+        documents: generateStoreDocuments(),
+        status: 'Closed' as const,
+        branchCode: 'SOH-01',
+        dateOpened: '2017-11-05',
+    },
+    { 
+        id: 'store4', 
+        name: 'Nizwa Grand Mall', 
+        address: 'Nizwa', 
+        phone: faker.phone.number(), 
+        hours: '10am - 10pm', 
+        stockStatus: 'Low', 
+        zone: 'Ad Dakhiliyah', 
+        totalProducts: 600, 
+        staffCount: 5, 
+        inventory: generateProducts(30),
+        staff: generateStoreStaff(5),
+        performance: { revenue: 5600, orderCount: 60 },
+        documents: generateStoreDocuments(),
+        status: 'Open' as const,
+        branchCode: 'NZW-01',
+        dateOpened: '2020-01-15',
+    },
 ];
+
+// ✅ Assign orders *after* storeLocations is initialized
+storeLocations.forEach((store, index) => {
+    const orderCount = [10, 8, 12, 5][index] || 8;
+    store.orders = generateAdminOrders(orderCount);
+});
+
+// ✅ Populate delivery partner history
+deliveryPartnersList.forEach(partner => {
+    if (partner.id !== 'unassigned') {
+        partner.deliveryHistory = generateAdminOrders(
+            faker.number.int({ min: 5, max: 15 })
+        ).map(o => ({ ...o, status: 'Delivered' }));
+    }
+});
+
 
 export const generateReviews = (count: number) => {
     return Array.from({ length: count }, () => ({
@@ -217,4 +369,161 @@ export const giftCardThemes: Record<string, { image: string; quote: string }> = 
     image: 'https://images.pexels.com/photos/4348401/pexels-photo-4348401.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
     quote: 'The perfect gift of health.',
   },
+};
+
+// New mock data functions for User Management
+export const generateCustomers = (count: number) => {
+    return Array.from({ length: count }, () => ({
+        id: faker.string.uuid(),
+        name: faker.person.fullName(),
+        email: faker.internet.email(),
+        avatar: faker.image.avatar(),
+        status: faker.helpers.arrayElement(['Active', 'Blocked']),
+        joined: faker.date.past({ years: 2 }).toLocaleDateString(),
+    }));
+};
+
+export const generateSubAdmins = (count: number) => {
+    return Array.from({ length: count }, () => ({
+        id: faker.string.uuid(),
+        name: faker.person.fullName(),
+        email: faker.internet.email(),
+        avatar: faker.image.avatar(),
+        status: faker.helpers.arrayElement(['Active', 'Inactive']),
+        role: faker.helpers.arrayElement(['Content Manager', 'Order Processor', 'Support Staff']),
+        lastLogin: faker.date.recent().toLocaleString(),
+    }));
+};
+
+export const generateCategories = (count: number) => {
+    return Array.from({ length: count }, () => ({
+        id: faker.string.uuid(),
+        name: faker.commerce.department(),
+        productCount: faker.number.int({ min: 10, max: 500 }),
+        status: faker.helpers.arrayElement(['Active', 'Inactive']),
+    }));
+};
+
+export const generateWarehouses = (count: number) => {
+    return Array.from({ length: count }, () => ({
+        id: faker.string.uuid(),
+        name: `${faker.location.city()} Warehouse`,
+        location: faker.location.city(),
+        totalItems: faker.number.int({ min: 1000, max: 10000 }),
+        lowStockItems: faker.number.int({ min: 0, max: 100 }),
+    }));
+};
+
+export const generateReturnRequests = (count: number) => {
+    return Array.from({ length: count }, () => ({
+        id: `RR${faker.number.int({ min: 1000, max: 9999 })}`,
+        orderId: `TP${faker.number.int({ min: 100000, max: 999999 })}`,
+        customer: {
+            name: faker.person.fullName(),
+            email: faker.internet.email(),
+        },
+        product: generateProducts(1)[0],
+        reason: faker.lorem.sentence(),
+        date: faker.date.recent({ days: 7 }).toLocaleDateString(),
+    }));
+};
+
+export const generateTransactions = (count: number) => {
+    return Array.from({ length: count }, () => ({
+        id: `TXN${faker.string.alphanumeric(10).toUpperCase()}`,
+        orderId: `TP${faker.number.int({ min: 100000, max: 999999 })}`,
+        customer: {
+            name: faker.person.fullName(),
+            email: faker.internet.email(),
+        },
+        date: faker.date.recent({ days: 30 }).toISOString(),
+        amount: faker.commerce.price({ min: 10, max: 300 }),
+        method: faker.helpers.arrayElement(['Credit Card', 'COD', 'Wallet', 'UPI']),
+        status: faker.helpers.arrayElement(['Paid', 'Pending', 'Failed']),
+    }));
+};
+
+export const generateRefunds = (count: number) => {
+    return Array.from({ length: count }, () => ({
+        id: `REF${faker.number.int({ min: 1000, max: 9999 })}`,
+        transactionId: `TXN${faker.string.alphanumeric(10).toUpperCase()}`,
+        orderId: `TP${faker.number.int({ min: 100000, max: 999999 })}`,
+        customer: {
+            name: faker.person.fullName(),
+        },
+        amount: faker.commerce.price({ min: 10, max: 100 }),
+        status: faker.helpers.arrayElement(['Approved', 'Rejected', 'Pending']),
+        requestDate: faker.date.recent({ days: 10 }).toISOString(),
+        actionDate: faker.date.recent({ days: 5 }).toISOString(),
+        auditTrail: [
+            { status: 'Requested', date: faker.date.recent({ days: 10 }).toLocaleString() },
+            { status: 'In Review', date: faker.date.recent({ days: 8 }).toLocaleString() },
+            { status: 'Approved', date: faker.date.recent({ days: 5 }).toLocaleString() },
+        ],
+    }));
+};
+
+export const generatePromotions = (count: number) => {
+    const types = ['Percentage', 'Fixed Amount', 'Free Delivery', 'BOGO'];
+    return Array.from({ length: count }, () => ({
+        id: faker.string.uuid(),
+        title: faker.commerce.productAdjective() + ' ' + faker.helpers.arrayElement(['Sale', 'Offer', 'Discount']),
+        type: faker.helpers.arrayElement(types),
+        value: faker.number.int({ min: 10, max: 50 }),
+        status: faker.helpers.arrayElement(['Active', 'Expired', 'Scheduled']),
+        startDate: faker.date.recent().toLocaleDateString(),
+        endDate: faker.date.future().toLocaleDateString(),
+        usageCount: faker.number.int({ min: 0, max: 1000 }),
+    }));
+};
+
+export const generateBanners = (count: number) => {
+    return Array.from({ length: count }, () => ({
+        id: faker.string.uuid(),
+        title: faker.lorem.sentence(4),
+        subtitle: faker.lorem.sentence(8),
+        image: faker.image.urlLoremFlickr({ category: 'healthcare' }),
+        cta: 'Shop Now',
+    }));
+};
+
+export const generateNotificationTemplates = (count: number) => {
+    return Array.from({ length: count }, () => ({
+        id: faker.string.uuid(),
+        name: faker.helpers.arrayElement(['Order Confirmation', 'Password Reset', 'Shipping Update', 'Weekly Deals']),
+        content: `Hello {{customer_name}}, your order {{order_id}} is on its way!`,
+        enabled: faker.datatype.boolean(),
+        variables: ['{{customer_name}}', '{{order_id}}'],
+    }));
+};
+
+export const adminModules = [
+    { id: 'dashboard', name: 'Dashboard' },
+    { id: 'users', name: 'User Management' },
+    { id: 'products', name: 'Product & Inventory' },
+    { id: 'orders', name: 'Order & Delivery' },
+    { id: 'stores', name: 'Stores' },
+    { id: 'deliveryPartners', name: 'Delivery Partners' },
+    { id: 'payments', name: 'Payments' },
+    { id: 'promotions', name: 'Promotions' },
+    { id: 'cms', name: 'CMS' },
+    { id: 'analytics', name: 'Analytics' },
+    { id: 'settings', name: 'Settings' },
+];
+
+export const generateRoles = () => {
+    const permissions = ['view', 'add', 'edit', 'delete'];
+    const createPermissions = () => adminModules.reduce((acc, module) => {
+        acc[module.id] = permissions.reduce((pAcc, perm) => {
+            pAcc[perm] = Math.random() > 0.5;
+            return pAcc;
+        }, {} as Record<string, boolean>);
+        return acc;
+    }, {} as Record<string, Record<string, boolean>>);
+
+    return [
+        { id: 'role1', name: 'Super Admin', permissions: adminModules.reduce((acc, module) => ({...acc, [module.id]: { view: true, add: true, edit: true, delete: true } }), {}) },
+        { id: 'role2', name: 'Content Manager', permissions: createPermissions() },
+        { id: 'role3', name: 'Order Processor', permissions: createPermissions() },
+    ];
 };

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { Search, User, Menu, X, Globe, ShoppingCart } from 'lucide-react';
+import { Search, User, Menu, X, Globe, ShoppingCart, Shield, Package, LogOut } from 'lucide-react';
 import { useLanguage } from '../../hooks/useLanguage';
 import { useCart } from '../../contexts/CartContext';
 import MiniCart from './MiniCart';
@@ -16,6 +16,7 @@ interface HeaderProps {
 const Header: React.FC<HeaderProps> = ({ deliveryMode, setDeliveryMode }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [isProfileMenuOpen, setProfileMenuOpen] = useState(false);
   const { toggleLanguage, t, isRTL, currentLanguage } = useLanguage();
   const { cartCount } = useCart();
 
@@ -98,15 +99,52 @@ const Header: React.FC<HeaderProps> = ({ deliveryMode, setDeliveryMode }) => {
               {isCartOpen && <MiniCart />}
             </div>
 
-            <Link to="/profile">
+            {/* Profile Dropdown */}
+            <div
+                className="relative"
+                onMouseEnter={() => setProfileMenuOpen(true)}
+                onMouseLeave={() => setProfileMenuOpen(false)}
+            >
                 <motion.button
-                className="p-2 rounded-full hover:bg-gray-100"
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
+                    className="p-2 rounded-full hover:bg-gray-100"
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.9 }}
                 >
-                <User className="w-6 h-6 text-taiba-grey" />
+                    <User className="w-6 h-6 text-taiba-grey" />
                 </motion.button>
-            </Link>
+                <AnimatePresence>
+                    {isProfileMenuOpen && (
+                        <motion.div
+                            className="absolute right-0 top-full mt-2 w-56 bg-white rounded-xl shadow-2xl border z-20 p-2"
+                            initial={{ opacity: 0, y: -10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -10 }}
+                        >
+                            <div className="p-2 border-b mb-2">
+                                <p className="font-bold text-sm">Admin User</p>
+                                <p className="text-xs text-taiba-grey">admin@taiba.com</p>
+                            </div>
+                            <Link to="/profile" className="flex items-center space-x-3 w-full text-left p-2 rounded-md hover:bg-gray-100 text-sm font-medium text-gray-700">
+                                <User size={18} />
+                                <span>My Profile</span>
+                            </Link>
+                            <Link to="/profile" className="flex items-center space-x-3 w-full text-left p-2 rounded-md hover:bg-gray-100 text-sm font-medium text-gray-700">
+                                <Package size={18} />
+                                <span>My Orders</span>
+                            </Link>
+                            <Link to="/admin" className="flex items-center space-x-3 w-full text-left p-2 rounded-md hover:bg-gray-100 text-sm font-medium text-gray-700">
+                                <Shield size={18} />
+                                <span>Admin Panel</span>
+                            </Link>
+                            <div className="border-t my-2"></div>
+                            <button className="flex items-center space-x-3 w-full text-left p-2 rounded-md hover:bg-red-50 text-sm font-medium text-red-600">
+                                <LogOut size={18} />
+                                <span>Logout</span>
+                            </button>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+            </div>
 
             <motion.button
               className="md:hidden p-2"

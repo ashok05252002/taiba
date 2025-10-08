@@ -17,19 +17,24 @@ const ProductDetailPage: React.FC = () => {
   const [product, setProduct] = useState<Product | null>(null);
   const [reviews, setReviews] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [relatedProducts, setRelatedProducts] = useState<Product[]>([]);
+  const [relatedLoading, setRelatedLoading] = useState(true);
   const { t } = useLanguage();
   const { buyNow, triggerAnimation } = useCart();
   const addToCartRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setLoading(true);
+    setRelatedLoading(true);
     setTimeout(() => {
       if (id) {
         const [generatedProduct] = generateProducts(1);
         setProduct({ ...generatedProduct, id });
         setReviews(generateReviews(5));
+        setRelatedProducts(generateProducts(4, { category: generatedProduct.category }));
       }
       setLoading(false);
+      setRelatedLoading(false);
     }, 1000);
   }, [id]);
 
@@ -136,7 +141,7 @@ const ProductDetailPage: React.FC = () => {
         {/* Related Products */}
         <div className="mt-24">
             <h2 className="text-3xl font-bold text-center mb-12">Related Products</h2>
-            <ProductGrid isFeatured={true} />
+            <ProductGrid products={relatedProducts} loading={relatedLoading} />
         </div>
       </div>
     </motion.div>

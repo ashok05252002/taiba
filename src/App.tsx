@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import MainLayout from './layouts/MainLayout';
+import AdminLayout from './layouts/AdminLayout';
 import HomePage from './pages/HomePage';
 import ProductListingPage from './pages/ProductListingPage';
 import ProductDetailPage from './pages/ProductDetailPage';
@@ -20,6 +21,18 @@ import SupportPage from './pages/SupportPage';
 import ScrollToTop from './utils/ScrollToTop';
 import GiftCardPage from './pages/GiftCardPage';
 import NotFoundPage from './pages/NotFoundPage';
+import Dashboard from './components/admin/Dashboard';
+import UserManagementPage from './pages/admin/UserManagementPage';
+import ProductManagementPage from './pages/admin/ProductManagementPage';
+import OrderManagementPage from './pages/admin/OrderManagementPage';
+import PaymentManagementPage from './pages/admin/PaymentManagementPage';
+import PromotionManagementPage from './pages/admin/PromotionManagementPage';
+import CmsManagementPage from './pages/admin/CmsManagementPage';
+import AnalyticsPage from './pages/admin/AnalyticsPage';
+import SettingsPage from './pages/admin/SettingsPage';
+import StoreManagementPage from './pages/admin/StoreManagementPage';
+import DeliveryPartnerManagementPage from './pages/admin/DeliveryPartnerManagementPage';
+import DeliveryPartnerDetailPage from './pages/admin/DeliveryPartnerDetailPage';
 import { LanguageProvider } from './contexts/LanguageContext';
 import { CartProvider } from './contexts/CartContext';
 import { OrderProvider } from './contexts/OrderContext';
@@ -34,7 +47,7 @@ function App() {
             <OrderProvider>
               <ScrollToTop />
               <Routes>
-                <Route path="/" element={<MainLayout />}>
+                <Route path="/*" element={<MainLayout />}>
                   <Route index element={<HomePage />} />
                   <Route path="products" element={<ProductListingPage />} />
                   <Route path="products/:id" element={<ProductDetailPage />} />
@@ -55,6 +68,20 @@ function App() {
                   <Route path="support" element={<SupportPage />} />
                   <Route path="gift-cards" element={<GiftCardPage />} />
                   <Route path="*" element={<NotFoundPage />} />
+                </Route>
+                <Route path="/admin" element={<AdminLayout />}>
+                    <Route index element={<Dashboard />} />
+                    <Route path="users" element={<UserManagementPage />} />
+                    <Route path="products" element={<ProductManagementPage />} />
+                    <Route path="orders" element={<OrderManagementPage />} />
+                    <Route path="payments" element={<PaymentManagementPage />} />
+                    <Route path="promotions" element={<PromotionManagementPage />} />
+                    <Route path="cms" element={<CmsManagementPage />} />
+                    <Route path="analytics" element={<AnalyticsPage />} />
+                    <Route path="settings" element={<SettingsPage />} />
+                    <Route path="stores" element={<StoreManagementPage />} />
+                    <Route path="delivery-partners" element={<DeliveryPartnerManagementPage />} />
+                    <Route path="delivery-partners/:id" element={<DeliveryPartnerDetailPage />} />
                 </Route>
               </Routes>
             </OrderProvider>

@@ -91,11 +91,11 @@ const PrescriptionUploadModal: React.FC<PrescriptionUploadModalProps> = ({ isOpe
                 </div>
 
                 <div className="mt-4">
-                    <label htmlFor="cr-number" className="block text-sm font-medium text-gray-700 mb-1">CR Number (Optional)</label>
+                    <label htmlFor="cr-number" className="block text-sm font-medium text-gray-700 mb-1">CR Number (Civil ID)</label>
                     <input
                         type="text"
                         id="cr-number"
-                        placeholder="Enter Civil Registration Number"
+                        placeholder="Enter your Civil Registration Number"
                         className="w-full p-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-taiba-purple focus:border-transparent"
                     />
                 </div>

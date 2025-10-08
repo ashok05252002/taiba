@@ -4,12 +4,12 @@ import { ChevronLeft, ChevronRight, Gift } from 'lucide-react';
 import GiftCardCustomizationModal from './GiftCardCustomizationModal';
 
 const giftCategories = [
-  { name: 'Colleague', image: '/images/colleague.png', slug: 'colleague' },
-  { name: 'Grandfather', image: '/images/grandfather.png', slug: 'grandfather' },
-  { name: 'Grandmother', image: '/images/grandmother.png', slug: 'grandmother' },
-  { name: 'Dad', image: '/images/uncle.png', slug: 'dad' },
-  { name: 'Mom', image: '/images/aunt.png', slug: 'mom' },
-  { name: 'Children', image: '/images/children.png', slug: 'children' },
+  { name: 'Colleague', image: 'https://images.pexels.com/photos/819530/pexels-photo-819530.jpeg?auto=compress&cs=tinysrgb&w=600', slug: 'colleague' },
+  { name: 'Grandfather', image: 'https://images.pexels.com/photos/1519192/pexels-photo-1519192.jpeg?auto=compress&cs=tinysrgb&w=600', slug: 'grandfather' },
+  { name: 'Grandmother', image: 'https://images.pexels.com/photos/5617830/pexels-photo-5617830.jpeg?auto=compress&cs=tinysrgb&w=600', slug: 'grandmother' },
+  { name: 'Dad', image: 'https://images.pexels.com/photos/7533320/pexels-photo-7533320.jpeg?auto=compress&cs=tinysrgb&w=600', slug: 'dad' },
+  { name: 'Mom', image: 'https://images.pexels.com/photos/18440384/pexels-photo-18440384.jpeg?auto=compress&cs=tinysrgb&w=600', slug: 'mom' },
+  { name: 'Children', image: 'https://images.pexels.com/photos/1556706/pexels-photo-1556706.jpeg?auto=compress&cs=tinysrgb&w=600', slug: 'children' },
   { name: 'Gift Card', isGiftCard: true, slug: 'gift-card' },
 ];
 
