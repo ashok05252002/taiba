@@ -10,14 +10,14 @@ import { generateProducts, generateCategories, generateWarehouses } from '../../
 import { Product } from '../../types';
 import ClusterManagement from '../../components/admin/products/ClusterManagement';
 
-export type ProductCategory = ReturnType<typeof generateCategories>[0];
+export type ProductCategory = ReturnType<typeof generateCategories>[0] & { lastUpdated: string };
 export type Warehouse = ReturnType<typeof generateWarehouses>[0];
 export type ProductTab = 'products' | 'categories' | 'warehouses';
 
 const ProductManagementPage: React.FC = () => {
     const [activeTab, setActiveTab] = useState<ProductTab>('products');
     const [products, setProducts] = useState(() => generateProducts(20));
-    const [categories, setCategories] = useState(() => generateCategories(8));
+    const [categories, setCategories] = useState(() => generateCategories(8).map(c => ({...c, lastUpdated: new Date().toLocaleDateString()})));
     
     const [editingProduct, setEditingProduct] = useState<Product | null>(null);
     const [isAddPanelOpen, setAddPanelOpen] = useState(false);
@@ -72,7 +72,14 @@ const ProductManagementPage: React.FC = () => {
             case 'products':
                 return <AdminProductGrid products={products} onEdit={handleEditProduct} onAdd={handleAddClick} onDelete={handleDeleteProduct} onView={handleViewProduct} />;
             case 'categories':
-                return <CategoryManagement allProducts={products} categories={categories} setCategories={setCategories} />;
+                return <CategoryManagement 
+                            allProducts={products} 
+                            categories={categories} 
+                            setCategories={setCategories}
+                            onEditProduct={handleEditProduct}
+                            onDeleteProduct={handleDeleteProduct}
+                            onViewProduct={handleViewProduct}
+                       />;
             case 'warehouses':
                 return <ClusterManagement allProducts={products} />;
             default:

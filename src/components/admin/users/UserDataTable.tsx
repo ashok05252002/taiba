@@ -11,10 +11,9 @@ interface UserDataTableProps {
     onDeleteUser: (user: User) => void;
     onAddUser: () => void;
     userType: UserType | 'delivery' | 'customers';
-    onViewDetails?: (user: User) => void;
 }
 
-const UserDataTable: React.FC<UserDataTableProps> = ({ data, onEditUser, onDeleteUser, onAddUser, userType, onViewDetails }) => {
+const UserDataTable: React.FC<UserDataTableProps> = ({ data, onEditUser, onDeleteUser, onAddUser, userType }) => {
     const [searchTerm, setSearchTerm] = useState('');
     const [statusFilter, setStatusFilter] = useState('all');
     const [actionMenu, setActionMenu] = useState<string | null>(null);
@@ -39,6 +38,15 @@ const UserDataTable: React.FC<UserDataTableProps> = ({ data, onEditUser, onDelet
                 return 'bg-gray-100 text-gray-800';
             default:
                 return 'bg-yellow-100 text-yellow-800';
+        }
+    };
+    
+    const getViewLink = (user: User) => {
+        switch(userType) {
+            case 'customers': return `/admin/customers/${user.id}`;
+            case 'subAdmins': return `/admin/users/${user.id}`;
+            case 'delivery': return `/admin/delivery-partners/${user.id}`;
+            default: return '#';
         }
     };
 
@@ -123,9 +131,9 @@ const UserDataTable: React.FC<UserDataTableProps> = ({ data, onEditUser, onDelet
                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{user.joined}</td>
                                 )}
                                 <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium relative">
-                                    <button onClick={() => onViewDetails && onViewDetails(user)} className="p-2 text-gray-500 hover:text-taiba-blue rounded-full hover:bg-gray-100 inline-block">
+                                    <Link to={getViewLink(user)} className="p-2 text-gray-500 hover:text-taiba-blue rounded-full hover:bg-gray-100 inline-block">
                                         <Eye size={16} />
-                                    </button>
+                                    </Link>
                                     <button onClick={() => setActionMenu(actionMenu === user.id ? null : user.id)} className="text-gray-400 hover:text-gray-600 p-2 rounded-full">
                                         <MoreVertical size={20} />
                                     </button>

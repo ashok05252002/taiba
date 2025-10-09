@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Banner } from '../../../pages/admin/CmsManagementPage';
-import { Edit, Trash2, Plus } from 'lucide-react';
+import { Edit, Trash2, Plus, UploadCloud } from 'lucide-react';
 import ConfirmationModal from '../ConfirmationModal';
 
 interface BannerEditorProps {
@@ -31,22 +31,30 @@ const BannerEditor: React.FC<BannerEditorProps> = ({ banners, onUpdate, onDelete
                 {banners.map(banner => (
                     <div key={banner.id} className="bg-gray-50 p-4 rounded-lg border flex items-center gap-4">
                         <img src={banner.image} alt={banner.title} className="w-32 h-16 object-cover rounded-md" />
-                        <div className="flex-1">
+                        <div className="flex-1 space-y-2">
                             <input
                                 type="text"
                                 value={banner.title}
+                                placeholder="Banner Title"
                                 onChange={(e) => onUpdate({ ...banner, title: e.target.value })}
                                 className="font-semibold bg-transparent w-full p-1 rounded-md focus:bg-white focus:ring-1"
                             />
                              <input
                                 type="text"
                                 value={banner.subtitle}
+                                placeholder="Banner Subtitle"
                                 onChange={(e) => onUpdate({ ...banner, subtitle: e.target.value })}
                                 className="text-sm text-gray-500 bg-transparent w-full p-1 rounded-md focus:bg-white focus:ring-1"
                             />
+                            <input
+                                type="text"
+                                value={banner.image}
+                                placeholder="Image URL"
+                                onChange={(e) => onUpdate({ ...banner, image: e.target.value })}
+                                className="text-xs text-gray-400 bg-transparent w-full p-1 rounded-md focus:bg-white focus:ring-1"
+                            />
                         </div>
                         <div className="flex gap-2">
-                            <button onClick={() => alert('Edit functionality to be implemented')} className="p-2 text-gray-500 hover:text-taiba-blue rounded-full hover:bg-gray-100"><Edit size={16} /></button>
                             <button onClick={() => setDeletingBanner(banner)} className="p-2 text-gray-500 hover:text-red-500 rounded-full hover:bg-gray-100"><Trash2 size={16} /></button>
                         </div>
                     </div>

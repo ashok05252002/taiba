@@ -1,18 +1,21 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Users, Package, ShoppingBag, BarChart, FileText, MapPin, Phone, Clock } from 'lucide-react';
-import { StoreLocation } from '../../../pages/admin/StoreManagementPage';
+import { X, Users, Package, ShoppingBag, BarChart, FileText, MapPin, Phone, Clock, Search } from 'lucide-react';
+import { StoreLocation, StaffMember } from '../../../pages/admin/StoreManagementPage';
 import StoreInventoryTable from './StoreInventoryTable';
 import ReactECharts from 'echarts-for-react';
+import StoreStaffTable from './StoreStaffTable';
 
 interface StoreDetailPanelProps {
     store: StoreLocation | null;
     onClose: () => void;
+    onRemoveStaff: (storeId: string, staffId: string) => void;
+    onEditStaff: (storeId: string, staff: StaffMember) => void;
 }
 
 type StoreDetailTab = 'overview' | 'staff' | 'inventory' | 'orders' | 'performance' | 'documents';
 
-const StoreDetailPanel: React.FC<StoreDetailPanelProps> = ({ store, onClose }) => {
+const StoreDetailPanel: React.FC<StoreDetailPanelProps> = ({ store, onClose, onRemoveStaff, onEditStaff }) => {
     const [activeTab, setActiveTab] = useState<StoreDetailTab>('overview');
 
     const tabs: { id: StoreDetailTab; name: string; icon: React.ElementType }[] = [
@@ -49,19 +52,7 @@ const StoreDetailPanel: React.FC<StoreDetailPanelProps> = ({ store, onClose }) =
                     </div>
                 );
             case 'staff':
-                return (
-                    <ul className="space-y-3">
-                        {store.staff.map(member => (
-                            <li key={member.id} className="flex justify-between items-center p-3 bg-gray-50 rounded-md">
-                                <div>
-                                    <p className="font-medium">{member.name}</p>
-                                    <p className="text-xs text-gray-500">{member.role}</p>
-                                </div>
-                                <p className="text-sm text-gray-600">{member.phone}</p>
-                            </li>
-                        ))}
-                    </ul>
-                );
+                return <StoreStaffTable staff={store.staff} onRemove={(staffId) => onRemoveStaff(store.id, staffId)} onEdit={(staff) => onEditStaff(store.id, staff)} />;
             case 'inventory':
                 return <StoreInventoryTable inventory={store.inventory} />;
             case 'orders':

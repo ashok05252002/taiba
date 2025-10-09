@@ -6,14 +6,17 @@ import ConfirmationModal from '../../components/admin/ConfirmationModal';
 import StoreDataTable from '../../components/admin/stores/StoreDataTable';
 import StoreDetailPanel from '../../components/admin/stores/StoreDetailPanel';
 import AddStoreWizard from '../../components/admin/stores/AddStoreWizard';
+import EditStaffModal from '../../components/admin/stores/EditStaffModal';
 
 export type StoreLocation = typeof storeLocations[0];
+export type StaffMember = StoreLocation['staff'][0];
 
 const StoreManagementPage: React.FC = () => {
     const [stores, setStores] = useState(storeLocations);
     const [deletingStore, setDeletingStore] = useState<StoreLocation | null>(null);
     const [viewingStore, setViewingStore] = useState<StoreLocation | null>(null);
     const [isAddWizardOpen, setAddWizardOpen] = useState(false);
+    const [editingStaff, setEditingStaff] = useState<{ storeId: string; staff: StaffMember } | null>(null);
 
     const handleDelete = (store: StoreLocation) => {
         setDeletingStore(store);
@@ -52,10 +55,47 @@ const StoreManagementPage: React.FC = () => {
             status: 'Open',
             branchCode: `NEW-${crypto.randomUUID().slice(0, 4).toUpperCase()}`,
             dateOpened: new Date().toISOString().split('T')[0],
-            orders: [], // This is the crucial fix for the error
+            orders: [],
         };
         setStores(prev => [newStore, ...prev]);
         setAddWizardOpen(false);
+    };
+
+    const handleRemoveStaff = (storeId: string, staffId: string) => {
+        setStores(prevStores => {
+            const updatedStores = prevStores.map(store => {
+                if (store.id === storeId) {
+                    const updatedStaff = store.staff.filter(s => s.id !== staffId);
+                    return { ...store, staff: updatedStaff, staffCount: updatedStaff.length };
+                }
+                return store;
+            });
+            if (viewingStore?.id === storeId) {
+                setViewingStore(updatedStores.find(s => s.id === storeId) || null);
+            }
+            return updatedStores;
+        });
+    };
+
+    const handleEditStaff = (storeId: string, staff: StaffMember) => {
+        setEditingStaff({ storeId, staff });
+    };
+
+    const handleSaveStaff = (storeId: string, updatedStaff: StaffMember) => {
+        setStores(prevStores => {
+            const updatedStores = prevStores.map(store => {
+                if (store.id === storeId) {
+                    const newStaffList = store.staff.map(s => s.id === updatedStaff.id ? updatedStaff : s);
+                    return { ...store, staff: newStaffList };
+                }
+                return store;
+            });
+            if (viewingStore?.id === storeId) {
+                setViewingStore(updatedStores.find(s => s.id === storeId) || null);
+            }
+            return updatedStores;
+        });
+        setEditingStaff(null);
     };
 
     return (
@@ -78,9 +118,21 @@ const StoreManagementPage: React.FC = () => {
                 </div>
             </motion.div>
             
-            <StoreDetailPanel store={viewingStore} onClose={handleClosePanel} />
+            <StoreDetailPanel 
+                store={viewingStore} 
+                onClose={handleClosePanel} 
+                onRemoveStaff={handleRemoveStaff}
+                onEditStaff={handleEditStaff}
+            />
             
             <AddStoreWizard isOpen={isAddWizardOpen} onClose={() => setAddWizardOpen(false)} onAdd={handleAddStore} />
+
+            <EditStaffModal
+                isOpen={!!editingStaff}
+                onClose={() => setEditingStaff(null)}
+                staffMember={editingStaff?.staff || null}
+                onSave={(updatedStaff) => editingStaff && handleSaveStaff(editingStaff.storeId, updatedStaff)}
+            />
 
             <ConfirmationModal
                 isOpen={!!deletingStore}
