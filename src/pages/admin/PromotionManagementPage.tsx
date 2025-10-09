@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Plus } from 'lucide-react';
-import { generatePromotions } from '../../utils/mockData';
+import { generatePromotions, generateProducts } from '../../utils/mockData';
 import PromotionCard from '../../components/admin/promotions/PromotionCard';
 import CreateOfferModal from '../../components/admin/promotions/CreateOfferModal';
 import ConfirmationModal from '../../components/admin/ConfirmationModal';
@@ -13,6 +13,7 @@ const PromotionManagementPage: React.FC = () => {
     const [promotions, setPromotions] = useState(() => generatePromotions(8));
     const [editingPromotion, setEditingPromotion] = useState<Promotion | null>(null);
     const [deletingPromotion, setDeletingPromotion] = useState<Promotion | null>(null);
+    const allProducts = generateProducts(50); // For product selection in modal
 
     const handleOpenModal = (promo: Promotion | null = null) => {
         setEditingPromotion(promo);
@@ -76,6 +77,7 @@ const PromotionManagementPage: React.FC = () => {
                 onClose={() => { setIsModalOpen(false); setEditingPromotion(null); }} 
                 onSave={handleSavePromotion}
                 promotionToEdit={editingPromotion}
+                products={allProducts}
             />
             <ConfirmationModal
                 isOpen={!!deletingPromotion}

@@ -1,25 +1,30 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { generateDeliveryPartners } from '../../utils/mockData';
+import { deliveryPartnersList } from '../../utils/mockData';
 import UserDataTable from '../../components/admin/users/UserDataTable';
 import { Bike } from 'lucide-react';
 import EditUserPanel from '../../components/admin/users/EditUserPanel';
 import AddUserPanel from '../../components/admin/users/AddUserPanel';
 import ConfirmationModal from '../../components/admin/ConfirmationModal';
 import { User } from './UserManagementPage';
+import DeliveryPartnerDetailPanel from '../../components/admin/delivery-partners/DeliveryPartnerDetailPanel';
 
 const DeliveryPartnerManagementPage: React.FC = () => {
-    const [partners, setPartners] = useState(() => generateDeliveryPartners(15));
+    const [partners, setPartners] = useState(deliveryPartnersList);
     const [editingPartner, setEditingPartner] = useState<User | null>(null);
     const [isAddPanelOpen, setAddPanelOpen] = useState(false);
     const [deletingPartner, setDeletingPartner] = useState<User | null>(null);
+    const [viewingPartner, setViewingPartner] = useState<User | null>(null);
 
     const handleEdit = (partner: User) => setEditingPartner(partner);
     const handleAdd = () => setAddPanelOpen(true);
     const handleDelete = (partner: User) => setDeletingPartner(partner);
+    const handleView = (partner: User) => setViewingPartner(partner);
+
     const handleClosePanel = () => {
         setEditingPartner(null);
         setAddPanelOpen(false);
+        setViewingPartner(null);
     };
 
     const handleSave = (updatedPartner: User) => {
@@ -56,11 +61,13 @@ const DeliveryPartnerManagementPage: React.FC = () => {
                         onDeleteUser={handleDelete}
                         onAddUser={handleAdd}
                         userType="delivery"
+                        onViewDetails={handleView}
                     />
                 </div>
             </motion.div>
             <EditUserPanel user={editingPartner} onClose={handleClosePanel} onSave={handleSave} />
             <AddUserPanel isOpen={isAddPanelOpen} onClose={handleClosePanel} onAdd={handleAddUser} userType="delivery" />
+            <DeliveryPartnerDetailPanel partner={viewingPartner} onClose={handleClosePanel} />
             <ConfirmationModal
                 isOpen={!!deletingPartner}
                 onClose={() => setDeletingPartner(null)}

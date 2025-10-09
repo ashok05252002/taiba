@@ -8,7 +8,6 @@ interface UserManagementTabsProps {
 }
 
 const tabs: { id: UserType; label: string }[] = [
-    { id: 'customers', label: 'Customers' },
     { id: 'subAdmins', label: 'Sub-Admins' },
     { id: 'roles', label: 'Roles & Permissions' },
 ];

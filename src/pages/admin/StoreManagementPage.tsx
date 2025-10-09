@@ -5,6 +5,7 @@ import { Store, Plus } from 'lucide-react';
 import ConfirmationModal from '../../components/admin/ConfirmationModal';
 import StoreDataTable from '../../components/admin/stores/StoreDataTable';
 import StoreDetailPanel from '../../components/admin/stores/StoreDetailPanel';
+import AddStoreWizard from '../../components/admin/stores/AddStoreWizard';
 
 export type StoreLocation = typeof storeLocations[0];
 
@@ -12,6 +13,7 @@ const StoreManagementPage: React.FC = () => {
     const [stores, setStores] = useState(storeLocations);
     const [deletingStore, setDeletingStore] = useState<StoreLocation | null>(null);
     const [viewingStore, setViewingStore] = useState<StoreLocation | null>(null);
+    const [isAddWizardOpen, setAddWizardOpen] = useState(false);
 
     const handleDelete = (store: StoreLocation) => {
         setDeletingStore(store);
@@ -32,6 +34,30 @@ const StoreManagementPage: React.FC = () => {
         setViewingStore(null);
     };
 
+    const handleAddStore = (newStoreData: Partial<Omit<StoreLocation, 'id'>>) => {
+        const newStore: StoreLocation = {
+            id: crypto.randomUUID(),
+            name: newStoreData.name || 'New Store',
+            address: newStoreData.address || 'N/A',
+            phone: newStoreData.phone || 'N/A',
+            hours: newStoreData.hours || 'N/A',
+            stockStatus: 'Low',
+            zone: newStoreData.zone || 'N/A',
+            totalProducts: 0,
+            staffCount: (newStoreData.staff || []).length,
+            inventory: [],
+            staff: newStoreData.staff || [],
+            performance: { revenue: 0, orderCount: 0 },
+            documents: [],
+            status: 'Open',
+            branchCode: `NEW-${crypto.randomUUID().slice(0, 4).toUpperCase()}`,
+            dateOpened: new Date().toISOString().split('T')[0],
+            orders: [], // This is the crucial fix for the error
+        };
+        setStores(prev => [newStore, ...prev]);
+        setAddWizardOpen(false);
+    };
+
     return (
         <>
             <motion.div
@@ -42,7 +68,7 @@ const StoreManagementPage: React.FC = () => {
             >
                 <div className="flex justify-between items-center">
                     <h1 className="text-2xl font-bold text-gray-800 flex items-center gap-3"><Store /> Store Management</h1>
-                    <button className="flex items-center gap-2 px-4 py-2 bg-taiba-blue text-white rounded-full text-sm font-semibold">
+                    <button onClick={() => setAddWizardOpen(true)} className="flex items-center gap-2 px-4 py-2 bg-taiba-blue text-white rounded-full text-sm font-semibold">
                         <Plus size={16} /> Add Store
                     </button>
                 </div>
@@ -53,6 +79,8 @@ const StoreManagementPage: React.FC = () => {
             </motion.div>
             
             <StoreDetailPanel store={viewingStore} onClose={handleClosePanel} />
+            
+            <AddStoreWizard isOpen={isAddWizardOpen} onClose={() => setAddWizardOpen(false)} onAdd={handleAddStore} />
 
             <ConfirmationModal
                 isOpen={!!deletingStore}

@@ -1,10 +1,12 @@
 import React from 'react';
-import { generateWarehouses } from '../../../utils/mockData';
-import { Move } from 'lucide-react';
+import { Warehouse } from '../../../pages/admin/ProductManagementPage';
+import { Move, Settings } from 'lucide-react';
 
-const WarehouseManagement: React.FC = () => {
-    const warehouses = generateWarehouses(4);
+interface WarehouseManagementProps {
+    warehouses: Warehouse[];
+}
 
+const WarehouseManagement: React.FC<WarehouseManagementProps> = ({ warehouses }) => {
     return (
         <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200">
@@ -30,10 +32,14 @@ const WarehouseManagement: React.FC = () => {
                                     <span className="text-green-600">0</span>
                                 )}
                             </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                <button className="flex items-center gap-1 text-taiba-blue hover:underline">
+                            <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-4">
+                                <button className="inline-flex items-center gap-1 text-taiba-blue hover:underline">
                                     <Move size={14} />
                                     Transfer Stock
+                                </button>
+                                 <button className="inline-flex items-center gap-1 text-gray-600 hover:underline">
+                                    <Settings size={14} />
+                                    Manage Products
                                 </button>
                             </td>
                         </tr>

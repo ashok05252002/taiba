@@ -88,7 +88,7 @@ interface GenerationOptions {
     isRecommended?: boolean;
 }
 
-export const generateProducts = (count: number, options?: GenerationOptions): Product[] => {
+const generateProducts = (count: number, options?: GenerationOptions): Product[] => {
     return Array.from({ length: count }, () => {
         const specifiedCategory = options?.category ? categoryMap[options.category.toLowerCase().replace(/ /g, '-')] : undefined;
         const category: ImageCategory = specifiedCategory || faker.helpers.arrayElement(allCategories);
@@ -141,52 +141,7 @@ export const generateProducts = (count: number, options?: GenerationOptions): Pr
     });
 };
 
-// MOVED UP to fix initialization error
-export const generateDeliveryPartners = (count: number) => {
-    return Array.from({ length: count }, () => ({
-        id: faker.string.uuid(),
-        name: faker.person.fullName(),
-        email: faker.internet.email(),
-        avatar: faker.image.avatar(),
-        status: faker.helpers.arrayElement(['On-Duty', 'Offline', 'Blocked']),
-        zone: faker.location.city(),
-        rating: faker.number.float({ min: 4, max: 5, fractionDigits: 1 }),
-        totalDeliveries: faker.number.int({ min: 50, max: 500 }),
-        onTimeRate: faker.number.float({ min: 90, max: 99, fractionDigits: 1 }),
-        joinedDate: faker.date.past({ years: 2 }).toLocaleDateString(),
-        // The circular dependency is broken by generating history on the fly in the detail page, or by generating it after all lists are created.
-        // For now, we can create orders without partners, then link them.
-        // To fix the immediate error, we must avoid calling generateAdminOrders here.
-        deliveryHistory: [] 
-    }));
-};
-
-// MOVED UP
-export const deliveryPartnersList = [
-    ...generateDeliveryPartners(5),
-    { id: 'unassigned', name: 'Unassigned', email: '', avatar: '', status: 'Offline', zone: '', rating: 0, totalDeliveries: 0, onTimeRate: 0, joinedDate: '', deliveryHistory: [] }
-];
-
-export const generateAdminOrders = (count: number) => {
-    return Array.from({ length: count }, () => ({
-        id: `TP${faker.number.int({ min: 100000, max: 999999 })}`,
-        customer: {
-            name: faker.person.fullName(),
-            email: faker.internet.email(),
-            avatar: faker.image.avatar(),
-        },
-        date: faker.date.recent({ days: 30 }).toISOString(),
-        total: faker.commerce.price({ min: 10, max: 300 }),
-        status: faker.helpers.arrayElement(['Pending', 'Processing', 'Shipped', 'Delivered', 'Cancelled']),
-        items: generateProducts(faker.number.int({ min: 1, max: 5 })),
-        shippingAddress: `${faker.location.streetAddress()}, ${faker.location.city()}`,
-        paymentMethod: faker.helpers.arrayElement(['Credit Card', 'COD', 'Wallet']),
-        deliveryPartner: faker.helpers.arrayElement(deliveryPartnersList),
-        branch: faker.helpers.arrayElement(storeLocations.map(s => ({id: s.id, name: s.name, address: s.address}))),
-    }));
-};
-
-export const generateOrderHistory = (count: number) => {
+const generateOrderHistory = (count: number) => {
     return Array.from({ length: count }, () => {
         const products = generateProducts(faker.number.int({ min: 1, max: 5 }));
         const total = products.reduce((sum, p) => sum + p.price, 0);
@@ -200,7 +155,7 @@ export const generateOrderHistory = (count: number) => {
     });
 };
 
-export const generateAddresses = (count: number) => {
+const generateAddresses = (count: number) => {
     return Array.from({ length: count }, (_, i) => ({
         id: faker.string.uuid(),
         isDefault: i === 0,
@@ -228,207 +183,7 @@ const generateStoreDocuments = () => {
     ];
 };
 
-export const storeLocations = [
-    { 
-        id: 'store1', 
-        name: 'Muscat Grand Mall', 
-        address: 'Al Khuwair, Muscat', 
-        phone: faker.phone.number(), 
-        hours: '10am - 10pm', 
-        stockStatus: 'High', 
-        zone: 'Muscat Central', 
-        totalProducts: 1250, 
-        staffCount: 8, 
-        inventory: generateProducts(50), 
-        staff: generateStoreStaff(8),
-        performance: { revenue: 12450, orderCount: 150 },
-        documents: generateStoreDocuments(),
-        status: 'Open' as const,
-        branchCode: 'MCT-01',
-        dateOpened: '2015-03-10',
-    },
-    { 
-        id: 'store2', 
-        name: 'Salalah Gardens Mall', 
-        address: 'Salalah', 
-        phone: faker.phone.number(), 
-        hours: '10am - 10pm', 
-        stockStatus: 'Medium', 
-        zone: 'Dhofar', 
-        totalProducts: 800, 
-        staffCount: 6, 
-        inventory: generateProducts(40),
-        staff: generateStoreStaff(6),
-        performance: { revenue: 8900, orderCount: 95 },
-        documents: generateStoreDocuments(),
-        status: 'Open' as const,
-        branchCode: 'SLL-01',
-        dateOpened: '2018-09-22',
-    },
-    { 
-        id: 'store3', 
-        name: 'Sohar City Centre', 
-        address: 'Sohar', 
-        phone: faker.phone.number(), 
-        hours: '10am - 10pm', 
-        stockStatus: 'High', 
-        zone: 'Al Batinah North', 
-        totalProducts: 1100, 
-        staffCount: 7, 
-        inventory: generateProducts(45),
-        staff: generateStoreStaff(7),
-        performance: { revenue: 10500, orderCount: 120 },
-        documents: generateStoreDocuments(),
-        status: 'Closed' as const,
-        branchCode: 'SOH-01',
-        dateOpened: '2017-11-05',
-    },
-    { 
-        id: 'store4', 
-        name: 'Nizwa Grand Mall', 
-        address: 'Nizwa', 
-        phone: faker.phone.number(), 
-        hours: '10am - 10pm', 
-        stockStatus: 'Low', 
-        zone: 'Ad Dakhiliyah', 
-        totalProducts: 600, 
-        staffCount: 5, 
-        inventory: generateProducts(30),
-        staff: generateStoreStaff(5),
-        performance: { revenue: 5600, orderCount: 60 },
-        documents: generateStoreDocuments(),
-        status: 'Open' as const,
-        branchCode: 'NZW-01',
-        dateOpened: '2020-01-15',
-    },
-];
-
-// ✅ Assign orders *after* storeLocations is initialized
-storeLocations.forEach((store, index) => {
-    const orderCount = [10, 8, 12, 5][index] || 8;
-    store.orders = generateAdminOrders(orderCount);
-});
-
-// ✅ Populate delivery partner history
-deliveryPartnersList.forEach(partner => {
-    if (partner.id !== 'unassigned') {
-        partner.deliveryHistory = generateAdminOrders(
-            faker.number.int({ min: 5, max: 15 })
-        ).map(o => ({ ...o, status: 'Delivered' }));
-    }
-});
-
-
-export const generateReviews = (count: number) => {
-    return Array.from({ length: count }, () => ({
-        id: faker.string.uuid(),
-        author: faker.person.fullName(),
-        avatar: faker.image.avatar(),
-        rating: faker.number.int({ min: 3, max: 5 }),
-        date: faker.date.recent({ days: 30 }).toLocaleDateString(),
-        comment: faker.lorem.paragraph(),
-    }));
-};
-
-export const generateGiftCards = (count: number) => {
-    return Array.from({ length: count }, () => ({
-        id: faker.string.uuid(),
-        code: `TAIBA-${faker.string.alphanumeric(8).toUpperCase()}`,
-        initialValue: faker.helpers.arrayElement([10, 25, 50, 100]),
-        currentBalance: faker.number.float({ min: 0, max: 50, fractionDigits: 2 }),
-        purchaseDate: faker.date.past({ years: 1 }).toLocaleDateString(),
-    }));
-};
-
-export const giftCardThemes: Record<string, { image: string; quote: string }> = {
-  dad: {
-    image: 'https://images.pexels.com/photos/3768894/pexels-photo-3768894.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
-    quote: 'For the best Dad in the world.',
-  },
-  mom: {
-    image: 'https://images.pexels.com/photos/4061542/pexels-photo-4061542.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
-    quote: 'Thank you for everything, Mom.',
-  },
-  colleague: {
-    image: 'https://images.pexels.com/photos/3184418/pexels-photo-3184418.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
-    quote: 'Great working with you!',
-  },
-  grandfather: {
-    image: 'https://images.pexels.com/photos/8711333/pexels-photo-8711333.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
-    quote: 'To a legendary Grandfather.',
-  },
-  grandmother: {
-    image: 'https://images.pexels.com/photos/3768131/pexels-photo-3768131.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
-    quote: 'With love, for Grandma.',
-  },
-  children: {
-    image: 'https://images.pexels.com/photos/8471796/pexels-photo-8471796.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
-    quote: 'A special treat for you!',
-  },
-  default: {
-    image: 'https://images.pexels.com/photos/4348401/pexels-photo-4348401.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
-    quote: 'The perfect gift of health.',
-  },
-};
-
-// New mock data functions for User Management
-export const generateCustomers = (count: number) => {
-    return Array.from({ length: count }, () => ({
-        id: faker.string.uuid(),
-        name: faker.person.fullName(),
-        email: faker.internet.email(),
-        avatar: faker.image.avatar(),
-        status: faker.helpers.arrayElement(['Active', 'Blocked']),
-        joined: faker.date.past({ years: 2 }).toLocaleDateString(),
-    }));
-};
-
-export const generateSubAdmins = (count: number) => {
-    return Array.from({ length: count }, () => ({
-        id: faker.string.uuid(),
-        name: faker.person.fullName(),
-        email: faker.internet.email(),
-        avatar: faker.image.avatar(),
-        status: faker.helpers.arrayElement(['Active', 'Inactive']),
-        role: faker.helpers.arrayElement(['Content Manager', 'Order Processor', 'Support Staff']),
-        lastLogin: faker.date.recent().toLocaleString(),
-    }));
-};
-
-export const generateCategories = (count: number) => {
-    return Array.from({ length: count }, () => ({
-        id: faker.string.uuid(),
-        name: faker.commerce.department(),
-        productCount: faker.number.int({ min: 10, max: 500 }),
-        status: faker.helpers.arrayElement(['Active', 'Inactive']),
-    }));
-};
-
-export const generateWarehouses = (count: number) => {
-    return Array.from({ length: count }, () => ({
-        id: faker.string.uuid(),
-        name: `${faker.location.city()} Warehouse`,
-        location: faker.location.city(),
-        totalItems: faker.number.int({ min: 1000, max: 10000 }),
-        lowStockItems: faker.number.int({ min: 0, max: 100 }),
-    }));
-};
-
-export const generateReturnRequests = (count: number) => {
-    return Array.from({ length: count }, () => ({
-        id: `RR${faker.number.int({ min: 1000, max: 9999 })}`,
-        orderId: `TP${faker.number.int({ min: 100000, max: 999999 })}`,
-        customer: {
-            name: faker.person.fullName(),
-            email: faker.internet.email(),
-        },
-        product: generateProducts(1)[0],
-        reason: faker.lorem.sentence(),
-        date: faker.date.recent({ days: 7 }).toLocaleDateString(),
-    }));
-};
-
-export const generateTransactions = (count: number) => {
+const generateTransactions = (count: number) => {
     return Array.from({ length: count }, () => ({
         id: `TXN${faker.string.alphanumeric(10).toUpperCase()}`,
         orderId: `TP${faker.number.int({ min: 100000, max: 999999 })}`,
@@ -443,67 +198,124 @@ export const generateTransactions = (count: number) => {
     }));
 };
 
-export const generateRefunds = (count: number) => {
+const generateRefunds = (count: number) => {
     return Array.from({ length: count }, () => ({
-        id: `REF${faker.number.int({ min: 1000, max: 9999 })}`,
-        transactionId: `TXN${faker.string.alphanumeric(10).toUpperCase()}`,
+        id: `RF${faker.string.alphanumeric(8).toUpperCase()}`,
         orderId: `TP${faker.number.int({ min: 100000, max: 999999 })}`,
         customer: {
             name: faker.person.fullName(),
+            email: faker.internet.email(),
         },
-        amount: faker.commerce.price({ min: 10, max: 100 }),
-        status: faker.helpers.arrayElement(['Approved', 'Rejected', 'Pending']),
-        requestDate: faker.date.recent({ days: 10 }).toISOString(),
-        actionDate: faker.date.recent({ days: 5 }).toISOString(),
+        amount: faker.commerce.price({ min: 5, max: 100 }),
+        status: faker.helpers.arrayElement(['Pending', 'Approved', 'Rejected']),
+        requestDate: faker.date.recent({ days: 15 }).toISOString(),
+        reason: faker.lorem.sentence(),
         auditTrail: [
-            { status: 'Requested', date: faker.date.recent({ days: 10 }).toLocaleString() },
-            { status: 'In Review', date: faker.date.recent({ days: 8 }).toLocaleString() },
-            { status: 'Approved', date: faker.date.recent({ days: 5 }).toLocaleString() },
+            { status: 'Requested', date: faker.date.recent({ days: 14 }).toLocaleString() },
+            { status: 'In Review', date: faker.date.recent({ days: 10 }).toLocaleString() },
         ],
     }));
 };
 
-export const generatePromotions = (count: number) => {
-    const types = ['Percentage', 'Fixed Amount', 'Free Delivery', 'BOGO'];
+const generateReturnRequests = (count: number) => {
+    return Array.from({ length: count }, () => ({
+        id: `RR${faker.number.int({ min: 1000, max: 9999 })}`,
+        orderId: `TP${faker.number.int({ min: 100000, max: 999999 })}`,
+        customer: {
+            name: faker.person.fullName(),
+            email: faker.internet.email(),
+        },
+        product: generateProducts(1)[0],
+        reason: faker.lorem.sentence(),
+        date: faker.date.recent({ days: 7 }).toLocaleDateString(),
+    }));
+};
+
+const generateReviews = (count: number) => {
     return Array.from({ length: count }, () => ({
         id: faker.string.uuid(),
-        title: faker.commerce.productAdjective() + ' ' + faker.helpers.arrayElement(['Sale', 'Offer', 'Discount']),
-        type: faker.helpers.arrayElement(types),
-        value: faker.number.int({ min: 10, max: 50 }),
+        author: faker.person.fullName(),
+        avatar: faker.image.avatar(),
+        rating: faker.number.int({ min: 3, max: 5 }),
+        date: faker.date.recent({ days: 30 }).toLocaleDateString(),
+        comment: faker.lorem.paragraph(),
+    }));
+};
+
+const generateGiftCards = (count: number) => {
+    return Array.from({ length: count }, () => {
+        const initialValue = faker.helpers.arrayElement([10, 25, 50, 100]);
+        return {
+            id: faker.string.uuid(),
+            code: `TAIBA-${faker.string.alphanumeric(8).toUpperCase()}`,
+            initialValue,
+            currentBalance: faker.number.float({ min: 0, max: initialValue, fractionDigits: 2 }),
+            purchaseDate: faker.date.past().toLocaleDateString(),
+        };
+    });
+};
+
+const generateCategories = (count: number) => {
+    return Array.from({ length: count }, () => ({
+        id: faker.string.uuid(),
+        name: faker.commerce.department(),
+        productCount: faker.number.int({ min: 10, max: 200 }),
+        status: faker.helpers.arrayElement(['Active', 'Inactive']),
+    }));
+};
+
+const generateWarehouses = (count: number) => {
+    return Array.from({ length: count }, () => ({
+        id: faker.string.uuid(),
+        name: `${faker.location.city()} Warehouse`,
+        location: faker.location.city(),
+        totalItems: faker.number.int({ min: 1000, max: 50000 }),
+        lowStockItems: faker.number.int({ min: 0, max: 100 }),
+    }));
+};
+
+const generatePromotions = (count: number) => {
+    return Array.from({ length: count }, () => ({
+        id: faker.string.uuid(),
+        title: faker.lorem.words(3),
+        type: faker.helpers.arrayElement(['Percentage', 'Fixed Amount', 'BOGO']),
+        value: faker.number.int({ min: 5, max: 50 }),
         status: faker.helpers.arrayElement(['Active', 'Expired', 'Scheduled']),
-        startDate: faker.date.recent().toLocaleDateString(),
+        startDate: faker.date.past().toLocaleDateString(),
         endDate: faker.date.future().toLocaleDateString(),
         usageCount: faker.number.int({ min: 0, max: 1000 }),
     }));
 };
 
-export const generateBanners = (count: number) => {
+const generateBanners = (count: number) => {
     return Array.from({ length: count }, () => ({
         id: faker.string.uuid(),
-        title: faker.lorem.sentence(4),
-        subtitle: faker.lorem.sentence(8),
-        image: faker.image.urlLoremFlickr({ category: 'healthcare' }),
+        title: faker.lorem.sentence(),
+        subtitle: faker.lorem.words(5),
+        image: `https://picsum.photos/seed/${faker.string.uuid()}/800/400`,
         cta: 'Shop Now',
     }));
 };
 
-export const generateNotificationTemplates = (count: number) => {
+const generateNotificationTemplates = (count: number) => {
     return Array.from({ length: count }, () => ({
         id: faker.string.uuid(),
-        name: faker.helpers.arrayElement(['Order Confirmation', 'Password Reset', 'Shipping Update', 'Weekly Deals']),
-        content: `Hello {{customer_name}}, your order {{order_id}} is on its way!`,
+        name: faker.lorem.words(3),
+        content: faker.lorem.paragraph(),
         enabled: faker.datatype.boolean(),
-        variables: ['{{customer_name}}', '{{order_id}}'],
+        variables: ['{customer_name}', '{order_id}'],
     }));
 };
 
-export const adminModules = [
+const adminModules = [
     { id: 'dashboard', name: 'Dashboard' },
+    { id: 'customers', name: 'Customers' },
     { id: 'users', name: 'User Management' },
     { id: 'products', name: 'Product & Inventory' },
     { id: 'orders', name: 'Order & Delivery' },
     { id: 'stores', name: 'Stores' },
-    { id: 'deliveryPartners', name: 'Delivery Partners' },
+    { id: 'delivery-partners', name: 'Delivery Partners' },
+    { id: 'cluster-logic', name: 'Cluster Logic' },
     { id: 'payments', name: 'Payments' },
     { id: 'promotions', name: 'Promotions' },
     { id: 'cms', name: 'CMS' },
@@ -511,19 +323,242 @@ export const adminModules = [
     { id: 'settings', name: 'Settings' },
 ];
 
-export const generateRoles = () => {
-    const permissions = ['view', 'add', 'edit', 'delete'];
-    const createPermissions = () => adminModules.reduce((acc, module) => {
-        acc[module.id] = permissions.reduce((pAcc, perm) => {
-            pAcc[perm] = Math.random() > 0.5;
-            return pAcc;
-        }, {} as Record<string, boolean>);
-        return acc;
-    }, {} as Record<string, Record<string, boolean>>);
-
+const generateRoles = () => {
     return [
-        { id: 'role1', name: 'Super Admin', permissions: adminModules.reduce((acc, module) => ({...acc, [module.id]: { view: true, add: true, edit: true, delete: true } }), {}) },
-        { id: 'role2', name: 'Content Manager', permissions: createPermissions() },
-        { id: 'role3', name: 'Order Processor', permissions: createPermissions() },
+        { id: 'super-admin', name: 'Super Admin', permissions: adminModules.reduce((acc, m) => ({ ...acc, [m.id]: { view: true, add: true, edit: true, delete: true } }), {}) },
+        { id: 'content-manager', name: 'Content Manager', permissions: { cms: { view: true, add: true, edit: true, delete: false }, products: { view: true, add: false, edit: true, delete: false } } },
+        { id: 'order-processor', name: 'Order Processor', permissions: { orders: { view: true, add: false, edit: true, delete: false }, payments: { view: true } } },
     ];
+};
+
+const giftCardThemes: Record<string, { image: string, quote: string }> = {
+  dad: { image: 'https://images.pexels.com/photos/1651332/pexels-photo-1651332.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1', quote: "For the best dad in the world." },
+  mom: { image: 'https://images.pexels.com/photos/1007023/pexels-photo-1007023.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1', quote: "Thank you for everything, Mom." },
+  colleague: { image: 'https://images.pexels.com/photos/3184418/pexels-photo-3184418.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1', quote: "Great working with you!" },
+  grandfather: { image: 'https://images.pexels.com/photos/2207899/pexels-photo-2207899.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1', quote: "To a wonderful Grandfather." },
+  grandmother: { image: 'https://images.pexels.com/photos/4068314/pexels-photo-4068314.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1', quote: "With love, for Grandma." },
+  children: { image: 'https://images.pexels.com/photos/4545150/pexels-photo-4545150.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1', quote: "For the little one!" },
+  'gift-card': { image: 'https://images.pexels.com/photos/4386466/pexels-photo-4386466.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1', quote: "A gift of health and wellness." },
+  default: { image: 'https://images.pexels.com/photos/4386466/pexels-photo-4386466.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1', quote: "A special gift for you." },
+};
+
+// --- REFACTORED INITIALIZATION TO PREVENT ERRORS ---
+
+const generateDeliveryPartners = (count: number) => {
+    return Array.from({ length: count }, () => ({
+        id: faker.string.uuid(),
+        name: faker.person.fullName(),
+        email: faker.internet.email(),
+        avatar: faker.image.avatar(),
+        status: faker.helpers.arrayElement(['On-Duty', 'Offline', 'Blocked']),
+        zone: faker.location.city(),
+        rating: faker.number.float({ min: 4, max: 5, fractionDigits: 1 }),
+        totalDeliveries: faker.number.int({ min: 50, max: 500 }),
+        onTimeRate: faker.number.float({ min: 90, max: 99, fractionDigits: 1 }),
+        joinedDate: faker.date.past({ years: 2 }).toLocaleDateString(),
+        phone: faker.phone.number(),
+        licenseNumber: `OM-${faker.string.alphanumeric(8).toUpperCase()}`,
+        licenseExpiry: faker.date.future({ years: 1 }).toLocaleDateString(),
+        payoutHistory: Array.from({ length: 5 }, () => ({
+            id: `PAY-${faker.string.alphanumeric(6)}`,
+            date: faker.date.recent({ days: 90 }).toLocaleDateString(),
+            amount: faker.commerce.price({ min: 50, max: 200 }),
+            status: 'Processed',
+        })),
+        documents: [
+            { id: 'doc1', name: 'Driving License', status: 'Verified', expiry: faker.date.future({ years: 1 }).toLocaleDateString() },
+            { id: 'doc2', name: 'Vehicle Registration', status: 'Verified', expiry: faker.date.future({ years: 1 }).toLocaleDateString() },
+        ],
+        activityLog: Array.from({ length: 10 }, () => ({
+            id: faker.string.uuid(),
+            date: faker.date.recent({ days: 30 }).toISOString(),
+            action: faker.helpers.arrayElement(['Picked up order', 'Delivered order', 'Reported delay', 'Started shift']),
+            details: `Order #TP${faker.number.int({ min: 100000, max: 999999 })}`,
+        })),
+        deliveryHistory: [] as ReturnType<typeof generateAdminOrders>
+    }));
+};
+
+const baseDeliveryPartnersList = [
+    ...generateDeliveryPartners(15),
+    { 
+        id: 'unassigned', 
+        name: 'Unassigned', 
+        email: '', 
+        avatar: '', 
+        status: 'Offline', 
+        zone: '', 
+        rating: 0, 
+        totalDeliveries: 0, 
+        onTimeRate: 0, 
+        joinedDate: '', 
+        phone: '', 
+        licenseNumber: '',
+        licenseExpiry: '',
+        payoutHistory: [],
+        documents: [],
+        activityLog: [],
+        deliveryHistory: [] 
+    }
+];
+
+const generateAdminOrders = (count: number) => {
+    return Array.from({ length: count }, () => ({
+        id: `TP${faker.number.int({ min: 100000, max: 999999 })}`,
+        customer: {
+            id: faker.string.uuid(),
+            name: faker.person.fullName(),
+            email: faker.internet.email(),
+            avatar: faker.image.avatar(),
+        },
+        date: faker.date.recent({ days: 30 }).toISOString(),
+        total: faker.commerce.price({ min: 10, max: 300 }),
+        status: faker.helpers.arrayElement(['Pending', 'Processing', 'Shipped', 'Delivered', 'Cancelled']),
+        items: generateProducts(faker.number.int({ min: 1, max: 5 })),
+        shippingAddress: `${faker.location.streetAddress()}, ${faker.location.city()}`,
+        paymentMethod: faker.helpers.arrayElement(['Credit Card', 'COD', 'Wallet']),
+        deliveryPartner: faker.helpers.arrayElement(baseDeliveryPartnersList.filter(p => p.id !== 'unassigned')),
+        branch: { id: 'store1', name: 'Muscat Grand Mall', address: 'Al Khuwair, Muscat', zone: 'Muscat Central' },
+    }));
+};
+
+const baseStoreLocations = [
+    { 
+        id: 'store1', 
+        name: 'Muscat Grand Mall', 
+        address: 'Al Khuwair, Muscat', 
+        phone: faker.phone.number(), 
+        hours: '10am - 10pm', 
+        stockStatus: 'High' as const, 
+        zone: 'Muscat Central', 
+        totalProducts: 1250, 
+        staffCount: 8, 
+        inventory: generateProducts(50), 
+        staff: generateStoreStaff(8),
+        performance: { revenue: 12450, orderCount: 150 },
+        documents: generateStoreDocuments(),
+        status: 'Open' as const,
+        branchCode: 'MCT-01',
+        dateOpened: '2015-03-10',
+        orders: generateAdminOrders(faker.number.int({ min: 5, max: 15 }))
+    },
+    { 
+        id: 'store2', 
+        name: 'Salalah Gardens', 
+        address: 'Salalah', 
+        phone: faker.phone.number(), 
+        hours: '9am - 11pm', 
+        stockStatus: 'Medium' as const, 
+        zone: 'Dhofar', 
+        totalProducts: 850, 
+        staffCount: 6, 
+        inventory: generateProducts(40), 
+        staff: generateStoreStaff(6),
+        performance: { revenue: 8500, orderCount: 95 },
+        documents: generateStoreDocuments(),
+        status: 'Open' as const,
+        branchCode: 'SAL-01',
+        dateOpened: '2018-06-20',
+        orders: generateAdminOrders(faker.number.int({ min: 5, max: 15 }))
+    },
+];
+
+const storeLocations = baseStoreLocations;
+
+const deliveryPartnersList = baseDeliveryPartnersList.map(partner => {
+    if (partner.id !== 'unassigned') {
+        return {
+            ...partner,
+            deliveryHistory: generateAdminOrders(faker.number.int({ min: 5, max: 15 })).map(o => ({ ...o, status: 'Delivered' }))
+        };
+    }
+    return partner;
+});
+
+const generateCustomers = (count: number) => {
+    return Array.from({ length: count }, () => ({
+        id: faker.string.uuid(),
+        name: faker.person.fullName(),
+        email: faker.internet.email(),
+        avatar: faker.image.avatar(),
+        status: faker.helpers.arrayElement(['Active', 'Blocked']),
+        joined: faker.date.past({ years: 2 }).toLocaleDateString(),
+        lastLogin: faker.date.recent().toISOString(),
+        addresses: generateAddresses(faker.number.int({ min: 1, max: 3 })),
+        orderHistory: generateOrderHistory(faker.number.int({ min: 0, max: 15 })),
+        paymentHistory: generateTransactions(faker.number.int({ min: 0, max: 10 })),
+        returnHistory: generateReturnRequests(faker.number.int({ min: 0, max: 2 })),
+        loyaltyPoints: faker.number.int({ min: 0, max: 5000 }),
+        communicationLog: Array.from({ length: faker.number.int({ min: 1, max: 5 }) }, () => ({
+            id: faker.string.uuid(),
+            date: faker.date.recent({ days: 90 }).toISOString(),
+            subject: faker.lorem.sentence(),
+            type: faker.helpers.arrayElement(['Email', 'Support Ticket', 'System Notification']),
+        })),
+        accountActionsLog: Array.from({ length: faker.number.int({ min: 0, max: 3 }) }, () => ({
+            id: faker.string.uuid(),
+            date: faker.date.recent({ days: 90 }).toISOString(),
+            action: faker.helpers.arrayElement(['Password Reset', 'Account Unblocked', 'Loyalty Points Added']),
+            admin: 'Admin User',
+        })),
+    }));
+};
+
+const generateSubAdmins = (count: number) => {
+    return Array.from({ length: count }, () => ({
+        id: faker.string.uuid(),
+        name: faker.person.fullName(),
+        email: faker.internet.email(),
+        avatar: faker.image.avatar(),
+        status: faker.helpers.arrayElement(['Active', 'Inactive']),
+        role: faker.helpers.arrayElement(['Content Manager', 'Order Processor', 'Support Staff', 'Super Admin']),
+        lastLogin: faker.date.recent().toLocaleString(),
+        joinedDate: faker.date.past({ years: 2 }).toLocaleDateString(),
+        permissions: {}, // This will be populated by generateRoles
+        activityLog: Array.from({ length: faker.number.int({ min: 10, max: 50 }) }, () => {
+            const module = faker.helpers.arrayElement(['Products', 'Orders', 'Users', 'Promotions']);
+            const action = faker.helpers.arrayElement(['Created', 'Updated', 'Deleted']);
+            return {
+                id: faker.string.uuid(),
+                date: faker.date.recent({ days: 30 }).toISOString(),
+                action: `${action} a ${module.slice(0, -1)}`,
+                module: module,
+                details: `Changed status from 'Pending' to 'Processing'`,
+                before: { status: 'Pending' },
+                after: { status: 'Processing' },
+                targetId: faker.string.uuid(),
+            };
+        }),
+    }));
+};
+
+
+const customerList = generateCustomers(50);
+const subAdminList = generateSubAdmins(5);
+
+export { 
+    customerList, 
+    subAdminList, 
+    deliveryPartnersList, 
+    storeLocations, 
+    giftCardThemes 
+};
+
+export { 
+    generateProducts, 
+    generateAddresses, 
+    generateOrderHistory,
+    generateAdminOrders,
+    generateReturnRequests,
+    generateTransactions,
+    generateRefunds,
+    generateReviews, 
+    generateGiftCards, 
+    generateCategories, 
+    generateWarehouses, 
+    generatePromotions, 
+    generateBanners, 
+    generateNotificationTemplates, 
+    adminModules, 
+    generateRoles 
 };

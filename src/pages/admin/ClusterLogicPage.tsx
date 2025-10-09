@@ -1,9 +1,39 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Network, MapPin, Package } from 'lucide-react';
-import BranchTable from '../../components/admin/cluster/BranchTable';
+import { Network, Map, List, Archive, Bike, FileText, BarChart } from 'lucide-react';
+import ClusterMap from '../../components/admin/cluster-logic/ClusterMap';
+import OrderAssignmentFlow from '../../components/admin/cluster-logic/OrderAssignmentFlow';
+import StockReservationMonitor from '../../components/admin/cluster-logic/StockReservationMonitor';
+import DeliveryAssignmentMonitor from '../../components/admin/cluster-logic/DeliveryAssignmentMonitor';
+import LiveActivityFeed from '../../components/admin/cluster-logic/LiveActivityFeed';
+import ClusterAuditLog from '../../components/admin/cluster-logic/ClusterAuditLog';
+
+type ClusterTab = 'map' | 'flow' | 'reservations' | 'deliveries' | 'logs' | 'reports';
 
 const ClusterLogicPage: React.FC = () => {
+    const [activeTab, setActiveTab] = useState<ClusterTab>('map');
+
+    const tabs: { id: ClusterTab; name: string; icon: React.ElementType }[] = [
+        { id: 'map', name: 'Map', icon: Map },
+        { id: 'flow', name: 'Order Flow', icon: List },
+        { id: 'reservations', name: 'Reservations', icon: Archive },
+        { id: 'deliveries', name: 'Deliveries', icon: Bike },
+        { id: 'logs', name: 'Logs', icon: FileText },
+        { id: 'reports', name: 'Reports', icon: BarChart },
+    ];
+
+    const renderContent = () => {
+        switch (activeTab) {
+            case 'map': return <ClusterMap />;
+            case 'flow': return <OrderAssignmentFlow />;
+            case 'reservations': return <StockReservationMonitor />;
+            case 'deliveries': return <DeliveryAssignmentMonitor />;
+            case 'logs': return <LiveActivityFeed />;
+            case 'reports': return <ClusterAuditLog />;
+            default: return <ClusterMap />;
+        }
+    };
+
     return (
         <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -11,51 +41,27 @@ const ClusterLogicPage: React.FC = () => {
             transition={{ duration: 0.5 }}
             className="space-y-8"
         >
-            <div className="flex justify-between items-center">
-                <h1 className="text-2xl font-bold text-gray-800 flex items-center gap-3"><Network /> Cluster & Branch Logic</h1>
-            </div>
-
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                {/* Map View */}
-                <div className="lg:col-span-2 bg-white p-6 rounded-lg border shadow-sm">
-                    <h3 className="font-semibold mb-4">Live Branch Overview</h3>
-                    <div className="w-full h-96 bg-gray-200 rounded-md relative">
-                        <img src="/assets/images/maps/oman-map-placeholder.png" alt="Oman Map" className="w-full h-full object-cover rounded-md opacity-50" />
-                        {/* Mock branch locations */}
-                        <div className="absolute top-1/3 left-1/2 text-center cursor-pointer group">
-                            <MapPin className="text-taiba-blue group-hover:scale-125 transition-transform" size={32}/>
-                            <span className="text-xs font-bold bg-white/80 px-2 py-1 rounded-md shadow-md">Muscat</span>
-                        </div>
-                         <div className="absolute top-2/3 left-1/4 text-center cursor-pointer group">
-                            <MapPin className="text-taiba-purple group-hover:scale-125 transition-transform" size={32}/>
-                            <span className="text-xs font-bold bg-white/80 px-2 py-1 rounded-md shadow-md">Nizwa</span>
-                        </div>
-                         <div className="absolute top-1/4 left-1/3 text-center cursor-pointer group">
-                            <MapPin className="text-green-500 group-hover:scale-125 transition-transform" size={32}/>
-                            <span className="text-xs font-bold bg-white/80 px-2 py-1 rounded-md shadow-md">Sohar</span>
-                        </div>
-                    </div>
-                </div>
-
-                {/* Quick Stats */}
-                <div className="space-y-6">
-                    <div className="bg-white p-6 rounded-lg border shadow-sm">
-                        <h3 className="font-semibold text-gray-800 mb-2">Pending Assignments</h3>
-                        <p className="text-4xl font-bold text-orange-500">12</p>
-                        <p className="text-sm text-gray-500">Orders waiting for branch assignment</p>
-                    </div>
-                     <div className="bg-white p-6 rounded-lg border shadow-sm">
-                        <h3 className="font-semibold text-gray-800 mb-2">Active Deliveries</h3>
-                        <p className="text-4xl font-bold text-blue-500">34</p>
-                        <p className="text-sm text-gray-500">Deliveries currently in progress</p>
-                    </div>
-                </div>
-            </div>
-
-            {/* Branch Table */}
-            <div className="bg-white p-6 rounded-lg border shadow-sm">
-                <h3 className="font-semibold mb-4 text-lg flex items-center gap-2"><Package /> Branch Inventory & Assignment</h3>
-                <BranchTable />
+            <h1 className="text-2xl font-bold text-gray-800 flex items-center gap-3"><Network /> Cluster-Wise Branch Assignment</h1>
+            
+            <div className="bg-white rounded-lg border shadow-sm flex">
+                <nav className="w-56 border-r p-4">
+                    <ul className="space-y-1">
+                        {tabs.map(tab => (
+                            <li key={tab.id}>
+                                <button
+                                    onClick={() => setActiveTab(tab.id)}
+                                    className={`w-full flex items-center gap-3 p-2 rounded-md text-sm font-medium ${activeTab === tab.id ? 'bg-blue-100 text-taiba-blue' : 'hover:bg-gray-100'}`}
+                                >
+                                    <tab.icon size={16} />
+                                    {tab.name}
+                                </button>
+                            </li>
+                        ))}
+                    </ul>
+                </nav>
+                <main className="flex-1 p-6 bg-gray-50/50">
+                    {renderContent()}
+                </main>
             </div>
         </motion.div>
     );

@@ -15,15 +15,19 @@ import {
   LogOut,
   ChevronDown,
   Store,
+  UserCheck,
+  Network,
 } from 'lucide-react';
 
 const navItems = [
-  { name: 'Dashboard', icon: LayoutDashboard, path: '/admin' },
-  { name: 'User Management', icon: Users, path: '/admin/users' },
+  { name: 'Dashboard', icon: LayoutDashboard, path: '/admin', exact: true },
+  { name: 'Customers', icon: Users, path: '/admin/customers' },
+  { name: 'User Management', icon: UserCheck, path: '/admin/users' },
   { name: 'Product & Inventory', icon: Package, path: '/admin/products' },
   { name: 'Order & Delivery', icon: Truck, path: '/admin/orders' },
   { name: 'Stores', icon: Store, path: '/admin/stores' },
   { name: 'Delivery Partners', icon: Bike, path: '/admin/delivery-partners' },
+  { name: 'Cluster Logic', icon: Network, path: '/admin/cluster-logic' },
   { name: 'Payments', icon: CreditCard, path: '/admin/payments' },
   { name: 'Promotions', icon: Ticket, path: '/admin/promotions' },
   { name: 'CMS', icon: FileText, path: '/admin/cms' },
@@ -64,7 +68,7 @@ const AdminSidebar: React.FC = () => {
                     initial={{ opacity: 0, y: -10 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -10 }}
-                    className="absolute top-full left-0 right-0 mt-2 bg-white shadow-lg rounded-lg border p-2"
+                    className="absolute top-full left-0 right-0 mt-2 bg-white shadow-lg rounded-lg border p-2 z-10"
                 >
                     <Link to="/admin/profile" className="block px-3 py-2 text-sm rounded-md hover:bg-gray-100">My Profile</Link>
                     <Link to="/admin/settings" className="block px-3 py-2 text-sm rounded-md hover:bg-gray-100">Settings</Link>
@@ -80,7 +84,7 @@ const AdminSidebar: React.FC = () => {
             <li key={item.name}>
               <NavLink
                 to={item.path}
-                end={item.path === '/admin'}
+                end={item.exact}
                 className={({ isActive }) =>
                   `flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
                     isActive

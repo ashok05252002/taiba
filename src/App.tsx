@@ -33,6 +33,12 @@ import SettingsPage from './pages/admin/SettingsPage';
 import StoreManagementPage from './pages/admin/StoreManagementPage';
 import DeliveryPartnerManagementPage from './pages/admin/DeliveryPartnerManagementPage';
 import DeliveryPartnerDetailPage from './pages/admin/DeliveryPartnerDetailPage';
+import CustomerManagementPage from './pages/admin/CustomerManagementPage';
+import CustomerDetailPage from './pages/admin/CustomerDetailPage';
+import SubAdminDetailPage from './pages/admin/SubAdminDetailPage';
+import ClusterLogicPage from './pages/admin/ClusterLogicPage';
+import ProductAdminDetailPage from './pages/admin/ProductDetailPage';
+import StoreDetailPage from './pages/admin/StoreDetailPage';
 import { LanguageProvider } from './contexts/LanguageContext';
 import { CartProvider } from './contexts/CartContext';
 import { OrderProvider } from './contexts/OrderContext';
@@ -72,7 +78,11 @@ function App() {
                 <Route path="/admin" element={<AdminLayout />}>
                     <Route index element={<Dashboard />} />
                     <Route path="users" element={<UserManagementPage />} />
+                    <Route path="users/:id" element={<SubAdminDetailPage />} />
+                    <Route path="customers" element={<CustomerManagementPage />} />
+                    <Route path="customers/:id" element={<CustomerDetailPage />} />
                     <Route path="products" element={<ProductManagementPage />} />
+                    <Route path="products/:id" element={<ProductAdminDetailPage />} />
                     <Route path="orders" element={<OrderManagementPage />} />
                     <Route path="payments" element={<PaymentManagementPage />} />
                     <Route path="promotions" element={<PromotionManagementPage />} />
@@ -80,8 +90,10 @@ function App() {
                     <Route path="analytics" element={<AnalyticsPage />} />
                     <Route path="settings" element={<SettingsPage />} />
                     <Route path="stores" element={<StoreManagementPage />} />
+                    <Route path="stores/:id" element={<StoreDetailPage />} />
                     <Route path="delivery-partners" element={<DeliveryPartnerManagementPage />} />
                     <Route path="delivery-partners/:id" element={<DeliveryPartnerDetailPage />} />
+                    <Route path="cluster-logic" element={<ClusterLogicPage />} />
                 </Route>
               </Routes>
             </OrderProvider>

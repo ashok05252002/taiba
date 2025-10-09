@@ -9,9 +9,10 @@ interface AdminProductGridProps {
     onEdit: (product: Product) => void;
     onAdd: () => void;
     onDelete: (product: Product) => void;
+    onView: (product: Product) => void;
 }
 
-const AdminProductGrid: React.FC<AdminProductGridProps> = ({ products, onEdit, onAdd, onDelete }) => {
+const AdminProductGrid: React.FC<AdminProductGridProps> = ({ products, onEdit, onAdd, onDelete, onView }) => {
     return (
         <div>
             <div className="flex flex-col md:flex-row items-center justify-between mb-4 gap-4">
@@ -44,7 +45,7 @@ const AdminProductGrid: React.FC<AdminProductGridProps> = ({ products, onEdit, o
                             visible: { opacity: 1, y: 0 }
                         }}
                     >
-                        <AdminProductCard product={product} onEdit={() => onEdit(product)} onDelete={() => onDelete(product)} />
+                        <AdminProductCard product={product} onEdit={() => onEdit(product)} onDelete={() => onDelete(product)} onView={() => onView(product)} />
                     </motion.div>
                 ))}
             </motion.div>

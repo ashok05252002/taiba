@@ -1,14 +1,16 @@
 import React from 'react';
 import { Product } from '../../../types';
-import { Edit, Trash2 } from 'lucide-react';
+import { Edit, Trash2, Eye } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 interface AdminProductCardProps {
     product: Product;
     onEdit: () => void;
     onDelete: () => void;
+    onView: () => void;
 }
 
-const AdminProductCard: React.FC<AdminProductCardProps> = ({ product, onEdit, onDelete }) => {
+const AdminProductCard: React.FC<AdminProductCardProps> = ({ product, onEdit, onDelete, onView }) => {
     const stockStatusColor = product.stock > 20 ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800';
     
     return (
@@ -23,6 +25,9 @@ const AdminProductCard: React.FC<AdminProductCardProps> = ({ product, onEdit, on
                     </span>
                 </div>
                 <div className="flex justify-end gap-2 border-t pt-3 mt-auto">
+                    <button onClick={onView} className="p-2 text-gray-500 hover:text-taiba-blue rounded-full hover:bg-gray-100">
+                        <Eye size={16} />
+                    </button>
                     <button onClick={onEdit} className="p-2 text-gray-500 hover:text-taiba-blue rounded-full hover:bg-gray-100">
                         <Edit size={16} />
                     </button>

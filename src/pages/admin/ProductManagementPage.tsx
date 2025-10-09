@@ -4,11 +4,11 @@ import ProductSummaryCards from '../../components/admin/products/ProductSummaryC
 import ProductManagementTabs from '../../components/admin/products/ProductManagementTabs';
 import AdminProductGrid from '../../components/admin/products/AdminProductGrid';
 import CategoryManagement from '../../components/admin/products/CategoryManagement';
-import WarehouseManagement from '../../components/admin/products/WarehouseManagement';
 import EditProductPanel from '../../components/admin/products/EditProductPanel';
 import ConfirmationModal from '../../components/admin/ConfirmationModal';
 import { generateProducts, generateCategories, generateWarehouses } from '../../utils/mockData';
 import { Product } from '../../types';
+import ClusterManagement from '../../components/admin/products/ClusterManagement';
 
 export type ProductCategory = ReturnType<typeof generateCategories>[0];
 export type Warehouse = ReturnType<typeof generateWarehouses>[0];
@@ -18,25 +18,34 @@ const ProductManagementPage: React.FC = () => {
     const [activeTab, setActiveTab] = useState<ProductTab>('products');
     const [products, setProducts] = useState(() => generateProducts(20));
     const [categories, setCategories] = useState(() => generateCategories(8));
-    const [warehouses, setWarehouses] = useState(() => generateWarehouses(4));
     
     const [editingProduct, setEditingProduct] = useState<Product | null>(null);
     const [isAddPanelOpen, setAddPanelOpen] = useState(false);
     const [deletingProduct, setDeletingProduct] = useState<Product | null>(null);
+    const [viewingProduct, setViewingProduct] = useState<Product | null>(null);
 
     const handleEditProduct = (product: Product) => {
         setEditingProduct(product);
+        setAddPanelOpen(false);
+        setViewingProduct(null);
+    };
+    
+    const handleViewProduct = (product: Product) => {
+        setViewingProduct(product);
+        setEditingProduct(null);
         setAddPanelOpen(false);
     };
 
     const handleAddClick = () => {
         setEditingProduct(null);
         setAddPanelOpen(true);
+        setViewingProduct(null);
     };
 
     const handleClosePanel = () => {
         setEditingProduct(null);
         setAddPanelOpen(false);
+        setViewingProduct(null);
     };
 
     const handleSaveProduct = (productData: Product) => {
@@ -61,11 +70,11 @@ const ProductManagementPage: React.FC = () => {
     const renderContent = () => {
         switch (activeTab) {
             case 'products':
-                return <AdminProductGrid products={products} onEdit={handleEditProduct} onAdd={handleAddClick} onDelete={handleDeleteProduct} />;
+                return <AdminProductGrid products={products} onEdit={handleEditProduct} onAdd={handleAddClick} onDelete={handleDeleteProduct} onView={handleViewProduct} />;
             case 'categories':
-                return <CategoryManagement categories={categories} setCategories={setCategories} />;
+                return <CategoryManagement allProducts={products} categories={categories} setCategories={setCategories} />;
             case 'warehouses':
-                return <WarehouseManagement warehouses={warehouses} />;
+                return <ClusterManagement allProducts={products} />;
             default:
                 return null;
         }
@@ -86,8 +95,9 @@ const ProductManagementPage: React.FC = () => {
                     {renderContent()}
                 </div>
                 <EditProductPanel 
-                    product={editingProduct} 
+                    product={editingProduct || viewingProduct} 
                     isAdding={isAddPanelOpen}
+                    isViewing={!!viewingProduct}
                     onClose={handleClosePanel}
                     onSave={handleSaveProduct}
                 />

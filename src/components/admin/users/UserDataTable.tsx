@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { User, UserType } from '../../../pages/admin/UserManagementPage';
 import UserTableFilters from './UserTableFilters';
-import { MoreVertical, Eye } from 'lucide-react';
+import { MoreVertical, Eye, User as UserIcon } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
 
@@ -10,10 +10,11 @@ interface UserDataTableProps {
     onEditUser: (user: User) => void;
     onDeleteUser: (user: User) => void;
     onAddUser: () => void;
-    userType: UserType | 'delivery';
+    userType: UserType | 'delivery' | 'customers';
+    onViewDetails?: (user: User) => void;
 }
 
-const UserDataTable: React.FC<UserDataTableProps> = ({ data, onEditUser, onDeleteUser, onAddUser, userType }) => {
+const UserDataTable: React.FC<UserDataTableProps> = ({ data, onEditUser, onDeleteUser, onAddUser, userType, onViewDetails }) => {
     const [searchTerm, setSearchTerm] = useState('');
     const [statusFilter, setStatusFilter] = useState('all');
     const [actionMenu, setActionMenu] = useState<string | null>(null);
@@ -53,6 +54,9 @@ const UserDataTable: React.FC<UserDataTableProps> = ({ data, onEditUser, onDelet
         if (userType === 'subAdmins') {
             base.push({ header: 'Role', accessor: 'role' });
         }
+        if (userType === 'customers') {
+            base.push({ header: 'Joined Date', accessor: 'joined' });
+        }
         base.push({ header: 'Actions', accessor: 'actions' });
         return base;
     }
@@ -85,7 +89,13 @@ const UserDataTable: React.FC<UserDataTableProps> = ({ data, onEditUser, onDelet
                                 <td className="px-6 py-4 whitespace-nowrap">
                                     <div className="flex items-center">
                                         <div className="flex-shrink-0 h-10 w-10">
-                                            <img className="h-10 w-10 rounded-full object-cover" src={user.avatar} alt="" />
+                                            {user.avatar ? (
+                                                <img className="h-10 w-10 rounded-full object-cover" src={user.avatar} alt="" />
+                                            ) : (
+                                                <div className="h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center">
+                                                    <UserIcon size={20} className="text-gray-500" />
+                                                </div>
+                                            )}
                                         </div>
                                         <div className="ml-4">
                                             <div className="text-sm font-medium text-gray-900">{'name' in user && user.name}</div>
@@ -109,12 +119,13 @@ const UserDataTable: React.FC<UserDataTableProps> = ({ data, onEditUser, onDelet
                                 {userType === 'subAdmins' && 'role' in user && (
                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{user.role}</td>
                                 )}
+                                {userType === 'customers' && 'joined' in user && (
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{user.joined}</td>
+                                )}
                                 <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium relative">
-                                    {userType === 'delivery' && (
-                                        <Link to={`/admin/delivery-partners/${user.id}`} className="p-2 text-gray-500 hover:text-taiba-blue rounded-full hover:bg-gray-100 inline-block">
-                                            <Eye size={16} />
-                                        </Link>
-                                    )}
+                                    <button onClick={() => onViewDetails && onViewDetails(user)} className="p-2 text-gray-500 hover:text-taiba-blue rounded-full hover:bg-gray-100 inline-block">
+                                        <Eye size={16} />
+                                    </button>
                                     <button onClick={() => setActionMenu(actionMenu === user.id ? null : user.id)} className="text-gray-400 hover:text-gray-600 p-2 rounded-full">
                                         <MoreVertical size={20} />
                                     </button>

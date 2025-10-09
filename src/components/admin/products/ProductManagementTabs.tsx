@@ -8,7 +8,7 @@ interface ProductManagementTabsProps {
 }
 
 const tabs: { id: ProductTab; label: string }[] = [
-    { id: 'products', label: 'Products' },
+    { id: 'products', label: 'All Products' },
     { id: 'categories', label: 'Categories' },
     { id: 'warehouses', label: 'Clusters / Warehouses' },
 ];
