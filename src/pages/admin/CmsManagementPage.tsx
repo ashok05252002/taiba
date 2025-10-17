@@ -36,7 +36,7 @@ const CmsManagementPage: React.FC = () => {
     };
     
     const handleAddBanner = () => {
-        const newBanner = {
+        const newBanner: Banner = {
             id: crypto.randomUUID(),
             title: 'New Banner Title',
             subtitle: 'New banner subtitle',

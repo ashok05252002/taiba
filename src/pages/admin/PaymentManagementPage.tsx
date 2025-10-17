@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import PaymentSummaryCards from '../../components/admin/payments/PaymentSummaryCards';
 import PaymentManagementTabs from '../../components/admin/payments/PaymentManagementTabs';
@@ -15,8 +15,7 @@ const PaymentManagementPage: React.FC = () => {
     const [activeTab, setActiveTab] = useState<PaymentTab>('transactions');
     const [selectedRefund, setSelectedRefund] = useState<Refund | null>(null);
     const [refunds, setRefunds] = useState(() => generateRefunds(10));
-    
-    const transactions = useMemo(() => generateTransactions(50), []);
+    const [transactions] = useState(() => generateTransactions(50));
 
     const handleViewRefund = (refund: Refund) => {
         setSelectedRefund(refund);
@@ -31,17 +30,6 @@ const PaymentManagementPage: React.FC = () => {
         handleCloseModal();
     };
 
-    const renderContent = () => {
-        switch (activeTab) {
-            case 'transactions':
-                return <TransactionDataTable transactions={transactions} />;
-            case 'refunds':
-                return <RefundDataTable refunds={refunds} onViewRefund={handleViewRefund} />;
-            default:
-                return null;
-        }
-    };
-
     return (
         <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -53,7 +41,11 @@ const PaymentManagementPage: React.FC = () => {
             <PaymentSummaryCards />
             <div className="bg-white p-6 rounded-lg border border-gray-200 shadow-sm">
                 <PaymentManagementTabs activeTab={activeTab} setActiveTab={setActiveTab} />
-                {renderContent()}
+                {activeTab === 'transactions' ? (
+                    <TransactionDataTable transactions={transactions} />
+                ) : (
+                    <RefundDataTable refunds={refunds} onViewRefund={handleViewRefund} />
+                )}
             </div>
             <RefundDetailModal refund={selectedRefund} onClose={handleCloseModal} onUpdateStatus={handleUpdateRefundStatus} />
         </motion.div>

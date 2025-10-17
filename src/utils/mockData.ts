@@ -344,63 +344,37 @@ const giftCardThemes: Record<string, { image: string, quote: string }> = {
 
 // --- REFACTORED INITIALIZATION TO PREVENT ERRORS ---
 
-const generateDeliveryPartners = (count: number) => {
-    return Array.from({ length: count }, () => ({
-        id: faker.string.uuid(),
-        name: faker.person.fullName(),
-        email: faker.internet.email(),
-        avatar: faker.image.avatar(),
-        status: faker.helpers.arrayElement(['On-Duty', 'Offline', 'Blocked']),
-        zone: faker.location.city(),
-        rating: faker.number.float({ min: 4, max: 5, fractionDigits: 1 }),
-        totalDeliveries: faker.number.int({ min: 50, max: 500 }),
-        onTimeRate: faker.number.float({ min: 90, max: 99, fractionDigits: 1 }),
-        joinedDate: faker.date.past({ years: 2 }).toLocaleDateString(),
-        phone: faker.phone.number(),
-        licenseNumber: `OM-${faker.string.alphanumeric(8).toUpperCase()}`,
-        licenseExpiry: faker.date.future({ years: 1 }).toLocaleDateString(),
-        payoutHistory: Array.from({ length: 5 }, () => ({
-            id: `PAY-${faker.string.alphanumeric(6)}`,
-            date: faker.date.recent({ days: 90 }).toLocaleDateString(),
-            amount: faker.commerce.price({ min: 50, max: 200 }),
-            status: 'Processed',
-        })),
-        documents: [
-            { id: 'doc1', name: 'Driving License', status: 'Verified', expiry: faker.date.future({ years: 1 }).toLocaleDateString() },
-            { id: 'doc2', name: 'Vehicle Registration', status: 'Verified', expiry: faker.date.future({ years: 1 }).toLocaleDateString() },
-        ],
-        activityLog: Array.from({ length: 10 }, () => ({
-            id: faker.string.uuid(),
-            date: faker.date.recent({ days: 30 }).toISOString(),
-            action: faker.helpers.arrayElement(['Picked up order', 'Delivered order', 'Reported delay', 'Started shift']),
-            details: `Order #TP${faker.number.int({ min: 100000, max: 999999 })}`,
-        })),
-        deliveryHistory: [] as ReturnType<typeof generateAdminOrders>
-    }));
-};
+const baseDeliveryPartnersList = Array.from({ length: 15 }, () => ({
+    id: faker.string.uuid(),
+    name: faker.person.fullName(),
+    email: faker.internet.email(),
+    avatar: faker.image.avatar(),
+    status: faker.helpers.arrayElement(['On-Duty', 'Offline', 'Blocked']),
+    zone: faker.location.city(),
+    rating: faker.number.float({ min: 4, max: 5, fractionDigits: 1 }),
+    totalDeliveries: faker.number.int({ min: 50, max: 500 }),
+    onTimeRate: faker.number.float({ min: 90, max: 99, fractionDigits: 1 }),
+    joinedDate: faker.date.past({ years: 2 }).toLocaleDateString(),
+    phone: faker.phone.number(),
+    licenseNumber: `OM-${faker.string.alphanumeric(8).toUpperCase()}`,
+    licenseExpiry: faker.date.future({ years: 1 }).toLocaleDateString(),
+    payoutHistory: Array.from({ length: 5 }, () => ({
+        id: `PAY-${faker.string.alphanumeric(6)}`,
+        date: faker.date.recent({ days: 90 }).toLocaleDateString(),
+        amount: faker.commerce.price({ min: 50, max: 200 }),
+        status: 'Processed',
+    })),
+    documents: [
+        { id: 'doc1', name: 'Driving License', status: 'Verified', expiry: faker.date.future({ years: 1 }).toLocaleDateString() },
+        { id: 'doc2', name: 'Vehicle Registration', status: 'Verified', expiry: faker.date.future({ years: 1 }).toLocaleDateString() },
+    ],
+    activityLog: [],
+    deliveryHistory: []
+}));
 
-const baseDeliveryPartnersList = [
-    ...generateDeliveryPartners(15),
-    { 
-        id: 'unassigned', 
-        name: 'Unassigned', 
-        email: '', 
-        avatar: '', 
-        status: 'Offline', 
-        zone: '', 
-        rating: 0, 
-        totalDeliveries: 0, 
-        onTimeRate: 0, 
-        joinedDate: '', 
-        phone: '', 
-        licenseNumber: '',
-        licenseExpiry: '',
-        payoutHistory: [],
-        documents: [],
-        activityLog: [],
-        deliveryHistory: [] 
-    }
-];
+baseDeliveryPartnersList.push({
+    id: 'unassigned', name: 'Unassigned', email: '', avatar: '', status: 'Offline', zone: '', rating: 0, totalDeliveries: 0, onTimeRate: 0, joinedDate: '', phone: '', licenseNumber: '', licenseExpiry: '', payoutHistory: [], documents: [], activityLog: [], deliveryHistory: []
+});
 
 const generateAdminOrders = (count: number) => {
     return Array.from({ length: count }, () => ({
@@ -467,74 +441,70 @@ const storeLocations = baseStoreLocations;
 
 const deliveryPartnersList = baseDeliveryPartnersList.map(partner => {
     if (partner.id !== 'unassigned') {
-        return {
-            ...partner,
-            deliveryHistory: generateAdminOrders(faker.number.int({ min: 5, max: 15 })).map(o => ({ ...o, status: 'Delivered' }))
-        };
+        const history = generateAdminOrders(faker.number.int({ min: 5, max: 15 })).map(o => ({ ...o, status: 'Delivered' as const }));
+        const activity = Array.from({ length: 10 }, () => ({
+            id: faker.string.uuid(),
+            date: faker.date.recent({ days: 30 }).toISOString(),
+            action: faker.helpers.arrayElement(['Picked up order', 'Delivered order', 'Reported delay', 'Started shift']),
+            details: `Order #TP${faker.number.int({ min: 100000, max: 999999 })}`,
+        }));
+        return { ...partner, deliveryHistory: history, activityLog: activity };
     }
     return partner;
 });
 
-const generateCustomers = (count: number) => {
-    return Array.from({ length: count }, () => ({
+const customerList = Array.from({ length: 50 }, () => ({
+    id: faker.string.uuid(),
+    name: faker.person.fullName(),
+    email: faker.internet.email(),
+    avatar: faker.image.avatar(),
+    status: faker.helpers.arrayElement(['Active', 'Blocked']),
+    joined: faker.date.past({ years: 2 }).toLocaleDateString(),
+    lastLogin: faker.date.recent().toISOString(),
+    addresses: generateAddresses(faker.number.int({ min: 1, max: 3 })),
+    orderHistory: generateOrderHistory(faker.number.int({ min: 0, max: 15 })),
+    paymentHistory: generateTransactions(faker.number.int({ min: 0, max: 10 })),
+    returnHistory: generateReturnRequests(faker.number.int({ min: 0, max: 2 })),
+    loyaltyPoints: faker.number.int({ min: 0, max: 5000 }),
+    communicationLog: Array.from({ length: faker.number.int({ min: 1, max: 5 }) }, () => ({
         id: faker.string.uuid(),
-        name: faker.person.fullName(),
-        email: faker.internet.email(),
-        avatar: faker.image.avatar(),
-        status: faker.helpers.arrayElement(['Active', 'Blocked']),
-        joined: faker.date.past({ years: 2 }).toLocaleDateString(),
-        lastLogin: faker.date.recent().toISOString(),
-        addresses: generateAddresses(faker.number.int({ min: 1, max: 3 })),
-        orderHistory: generateOrderHistory(faker.number.int({ min: 0, max: 15 })),
-        paymentHistory: generateTransactions(faker.number.int({ min: 0, max: 10 })),
-        returnHistory: generateReturnRequests(faker.number.int({ min: 0, max: 2 })),
-        loyaltyPoints: faker.number.int({ min: 0, max: 5000 }),
-        communicationLog: Array.from({ length: faker.number.int({ min: 1, max: 5 }) }, () => ({
-            id: faker.string.uuid(),
-            date: faker.date.recent({ days: 90 }).toISOString(),
-            subject: faker.lorem.sentence(),
-            type: faker.helpers.arrayElement(['Email', 'Support Ticket', 'System Notification']),
-        })),
-        accountActionsLog: Array.from({ length: faker.number.int({ min: 0, max: 3 }) }, () => ({
-            id: faker.string.uuid(),
-            date: faker.date.recent({ days: 90 }).toISOString(),
-            action: faker.helpers.arrayElement(['Password Reset', 'Account Unblocked', 'Loyalty Points Added']),
-            admin: 'Admin User',
-        })),
-    }));
-};
-
-const generateSubAdmins = (count: number) => {
-    return Array.from({ length: count }, () => ({
+        date: faker.date.recent({ days: 90 }).toISOString(),
+        subject: faker.lorem.sentence(),
+        type: faker.helpers.arrayElement(['Email', 'Support Ticket', 'System Notification']),
+    })),
+    accountActionsLog: Array.from({ length: faker.number.int({ min: 0, max: 3 }) }, () => ({
         id: faker.string.uuid(),
-        name: faker.person.fullName(),
-        email: faker.internet.email(),
-        avatar: faker.image.avatar(),
-        status: faker.helpers.arrayElement(['Active', 'Inactive']),
-        role: faker.helpers.arrayElement(['Content Manager', 'Order Processor', 'Support Staff', 'Super Admin']),
-        lastLogin: faker.date.recent().toLocaleString(),
-        joinedDate: faker.date.past({ years: 2 }).toLocaleDateString(),
-        permissions: {}, // This will be populated by generateRoles
-        activityLog: Array.from({ length: faker.number.int({ min: 10, max: 50 }) }, () => {
-            const module = faker.helpers.arrayElement(['Products', 'Orders', 'Users', 'Promotions']);
-            const action = faker.helpers.arrayElement(['Created', 'Updated', 'Deleted']);
-            return {
-                id: faker.string.uuid(),
-                date: faker.date.recent({ days: 30 }).toISOString(),
-                action: `${action} a ${module.slice(0, -1)}`,
-                module: module,
-                details: `Changed status from 'Pending' to 'Processing'`,
-                before: { status: 'Pending' },
-                after: { status: 'Processing' },
-                targetId: faker.string.uuid(),
-            };
-        }),
-    }));
-};
+        date: faker.date.recent({ days: 90 }).toISOString(),
+        action: faker.helpers.arrayElement(['Password Reset', 'Account Unblocked', 'Loyalty Points Added']),
+        admin: 'Admin User',
+    })),
+}));
 
-
-const customerList = generateCustomers(50);
-const subAdminList = generateSubAdmins(5);
+const subAdminList = Array.from({ length: 5 }, () => ({
+    id: faker.string.uuid(),
+    name: faker.person.fullName(),
+    email: faker.internet.email(),
+    avatar: faker.image.avatar(),
+    status: faker.helpers.arrayElement(['Active', 'Inactive']),
+    role: faker.helpers.arrayElement(['Content Manager', 'Order Processor', 'Support Staff', 'Super Admin']),
+    lastLogin: faker.date.recent().toLocaleString(),
+    joinedDate: faker.date.past({ years: 2 }).toLocaleDateString(),
+    permissions: {}, // This will be populated by generateRoles
+    activityLog: Array.from({ length: faker.number.int({ min: 10, max: 50 }) }, () => {
+        const module = faker.helpers.arrayElement(['Products', 'Orders', 'Users', 'Promotions']);
+        const action = faker.helpers.arrayElement(['Created', 'Updated', 'Deleted']);
+        return {
+            id: faker.string.uuid(),
+            date: faker.date.recent({ days: 30 }).toISOString(),
+            action: `${action} a ${module.slice(0, -1)}`,
+            module: module,
+            details: `Changed status from 'Pending' to 'Processing'`,
+            before: { status: 'Pending' },
+            after: { status: 'Processing' },
+            targetId: faker.string.uuid(),
+        };
+    }),
+}));
 
 export { 
     customerList, 

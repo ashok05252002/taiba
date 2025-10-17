@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { generateWarehouses } from '../../../utils/mockData';
+import { generateWarehouses, generateProducts } from '../../../utils/mockData';
 import { Move, Settings, Package, AlertTriangle } from 'lucide-react';
 import StockTransferModal from './StockTransferModal';
 import ProductAssignmentPanel from './ProductAssignmentPanel';

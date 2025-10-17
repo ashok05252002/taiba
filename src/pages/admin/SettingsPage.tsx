@@ -17,7 +17,6 @@ const SettingsPage: React.FC = () => {
 
     const handleSaveChanges = () => {
         alert('Settings saved!');
-        // In a real app, you would make an API call here.
     };
 
     const renderContent = () => {

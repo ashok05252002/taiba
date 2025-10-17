@@ -35,17 +35,6 @@ const OrderManagementPage: React.FC = () => {
         setReturns(prev => prev.filter(r => r.id !== returnId));
     };
 
-    const renderContent = () => {
-        switch (activeTab) {
-            case 'orders':
-                return <OrderDataTable orders={orders} onViewOrder={handleViewOrder} />;
-            case 'returns':
-                return <ReturnRequests requests={returns} onUpdate={handleUpdateReturn} />;
-            default:
-                return null;
-        }
-    };
-
     return (
         <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -57,7 +46,11 @@ const OrderManagementPage: React.FC = () => {
             <OrderSummaryCards />
             <div className="bg-white p-6 rounded-lg border border-gray-200 shadow-sm">
                 <OrderManagementTabs activeTab={activeTab} setActiveTab={setActiveTab} />
-                {renderContent()}
+                {activeTab === 'orders' ? (
+                    <OrderDataTable orders={orders} onViewOrder={handleViewOrder} />
+                ) : (
+                    <ReturnRequests requests={returns} onUpdate={handleUpdateReturn} />
+                )}
             </div>
             <OrderDetailModal order={selectedOrder} onClose={handleCloseModal} onUpdate={handleUpdateOrder} />
         </motion.div>

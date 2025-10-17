@@ -13,7 +13,7 @@ interface CreateOfferModalProps {
 }
 
 const steps = ['Type', 'Details', 'Products', 'Rules', 'Schedule', 'Review'];
-const defaultFormState = { title: '', type: 'Percentage', value: 10, status: 'Scheduled', startDate: '', endDate: '', eligibleProductIds: [] };
+const defaultFormState = { title: '', type: 'Percentage', value: 10, status: 'Scheduled', startDate: '', endDate: '', eligibleProductIds: [] as string[] };
 
 const CreateOfferModal: React.FC<CreateOfferModalProps> = ({ isOpen, onClose, onSave, promotionToEdit, products }) => {
     const [currentStep, setCurrentStep] = useState(0);
@@ -25,7 +25,10 @@ const CreateOfferModal: React.FC<CreateOfferModalProps> = ({ isOpen, onClose, on
     useEffect(() => {
         if (isOpen) {
             if (isEditing) {
-                setFormData(promotionToEdit);
+                setFormData({
+                    ...promotionToEdit,
+                    eligibleProductIds: (promotionToEdit as any).eligibleProductIds || []
+                });
             } else {
                 setFormData(defaultFormState);
             }

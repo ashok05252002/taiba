@@ -5,15 +5,16 @@ import { generatePromotions, generateProducts } from '../../utils/mockData';
 import PromotionCard from '../../components/admin/promotions/PromotionCard';
 import CreateOfferModal from '../../components/admin/promotions/CreateOfferModal';
 import ConfirmationModal from '../../components/admin/ConfirmationModal';
+import { Product } from '../../types';
 
-export type Promotion = ReturnType<typeof generatePromotions>[0];
+export type Promotion = ReturnType<typeof generatePromotions>[0] & { eligibleProductIds?: string[] };
 
 const PromotionManagementPage: React.FC = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [promotions, setPromotions] = useState(() => generatePromotions(8));
+    const [promotions, setPromotions] = useState<Promotion[]>(() => generatePromotions(8));
     const [editingPromotion, setEditingPromotion] = useState<Promotion | null>(null);
     const [deletingPromotion, setDeletingPromotion] = useState<Promotion | null>(null);
-    const allProducts = generateProducts(50); // For product selection in modal
+    const [allProducts] = useState<Product[]>(() => generateProducts(50));
 
     const handleOpenModal = (promo: Promotion | null = null) => {
         setEditingPromotion(promo);
@@ -22,15 +23,13 @@ const PromotionManagementPage: React.FC = () => {
 
     const handleSavePromotion = (promotion: Omit<Promotion, 'id' | 'usageCount'>) => {
         if (editingPromotion) {
-            // Update existing
             setPromotions(prev => prev.map(p => p.id === editingPromotion.id ? { ...editingPromotion, ...promotion } : p));
         } else {
-            // Add new
-            const newPromotion = {
+            const newPromotion: Promotion = {
                 ...promotion,
                 id: crypto.randomUUID(),
                 usageCount: 0,
-            } as Promotion;
+            };
             setPromotions(prev => [newPromotion, ...prev]);
         }
         setIsModalOpen(false);

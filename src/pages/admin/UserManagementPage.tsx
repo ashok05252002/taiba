@@ -7,6 +7,7 @@ import AddUserPanel from '../../components/admin/users/AddUserPanel';
 import ConfirmationModal from '../../components/admin/ConfirmationModal';
 import RoleManagement from '../../components/admin/roles/RoleManagement';
 import { subAdminList, generateRoles, adminModules } from '../../utils/mockData';
+import { faker } from '@faker-js/faker';
 
 export type User = typeof subAdminList[0];
 export type UserType = 'subAdmins' | 'roles';
@@ -34,7 +35,15 @@ const UserManagementPage: React.FC = () => {
     };
 
     const handleAddUser = (user: Omit<User, 'id'>) => {
-        const newUser = { ...user, id: crypto.randomUUID() } as User;
+        const newUser: User = {
+            ...user,
+            id: crypto.randomUUID(),
+            avatar: faker.image.avatar(),
+            joinedDate: new Date().toLocaleDateString(),
+            lastLogin: new Date().toISOString(),
+            activityLog: [],
+            permissions: {},
+        };
         setSubAdmins(prev => [newUser, ...prev]);
         handleClosePanel();
     };
