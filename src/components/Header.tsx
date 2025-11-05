@@ -29,7 +29,7 @@ const Header: React.FC = () => {
               whileTap={{ scale: 0.95 }}
             >
               <img
-                src="/assets/images/logo-taiba.png"
+                src="public/images/image.png"
                 alt="Taiba Pharmacy"
                 className="h-10 w-auto"
               />

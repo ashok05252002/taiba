@@ -56,7 +56,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
               {view === 'initial' && (
                 <motion.div key="initial" variants={modalVariants} initial="hidden" animate="visible" exit="exit">
                   <div className="text-center">
-                    <img src="https://taibarare.com/wp-content/themes/taiba/assets/img/home/footer/TAIBA%20ACCESS%20RARE%20FOOTER%20LOGO_.png" alt="Taiba Pharmacy" className="h-16 w-auto mx-auto mb-4" />
+                    <img src="public/images/image.png" alt="Taiba Pharmacy" className="h-16 w-auto mx-auto mb-4" />
                     <h2 className="text-2xl font-bold text-gray-900 mb-2">Join the Taiba Family</h2>
                     <p className="text-taiba-grey mb-6">Sign in or create an account to enjoy exclusive benefits.</p>
                     <div className="space-y-4">
