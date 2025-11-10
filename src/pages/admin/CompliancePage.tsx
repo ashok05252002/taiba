@@ -3,14 +3,14 @@ import { motion } from 'framer-motion';
 import ComplianceCard from '../../components/admin/compliance/ComplianceCard';
 import { Shield, FileText, Megaphone, Lock, ShieldCheck } from 'lucide-react';
 
+export type ComplianceStatus = 'Compliant' | 'Action Required' | 'Pending';
+
 const initialComplianceAreas = [
     { id: 1, icon: Lock, title: 'Data Protection (GDPR/Local Law)', status: 'Compliant' as const, lastAudit: '2025-05-15', details: 'All user data is encrypted and handled according to regulations.' },
     { id: 2, icon: Megaphone, title: 'Advertising Standards', status: 'Compliant' as const, lastAudit: '2025-04-20', details: 'All promotional materials reviewed and approved.' },
     { id: 3, icon: FileText, title: 'Pharmacy Licensing', status: 'Action Required' as const, lastAudit: '2024-12-01', details: 'License for Sohar branch expires in 30 days. Renewal in progress.' },
     { id: 4, icon: Shield, title: 'Product Registration', status: 'Compliant' as const, lastAudit: '2025-05-01', details: 'All products are registered with the Ministry of Health.' },
 ];
-
-export type ComplianceStatus = 'Compliant' | 'Action Required' | 'Pending';
 
 const CompliancePage: React.FC = () => {
     const [complianceAreas, setComplianceAreas] = useState(initialComplianceAreas);

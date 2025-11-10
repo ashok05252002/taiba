@@ -9,7 +9,7 @@ interface SignupFormProps {
 const SignupForm: React.FC<SignupFormProps> = ({ isModal }) => {
     return (
         <div>
-            {!isModal && <img className="mx-auto h-16 w-auto" src="public/images/image.png" alt="Taiba Pharmacy" />}
+            {!isModal && <img className="mx-auto h-16 w-auto" src="https://taibarare.com/wp-content/themes/taiba/assets/img/home/footer/TAIBA%20ACCESS%20RARE%20FOOTER%20LOGO_.png" alt="Taiba Pharmacy" />}
             <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
                 Create a new account
             </h2>

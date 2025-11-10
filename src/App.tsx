@@ -44,6 +44,13 @@ import { CartProvider } from './contexts/CartContext';
 import { OrderProvider } from './contexts/OrderContext';
 import { NotificationProvider } from './contexts/NotificationContext';
 
+// Mobile App Imports
+import MobileLayout from './mobile/layouts/MobileLayout';
+import MobileHomePage from './mobile/pages/MobileHomePage';
+import MobileSearchPage from './mobile/pages/MobileSearchPage';
+import MobileCartPage from './mobile/pages/MobileCartPage';
+import MobileProfilePage from './mobile/pages/MobileProfilePage';
+
 function App() {
   return (
     <Router>
@@ -53,6 +60,7 @@ function App() {
             <OrderProvider>
               <ScrollToTop />
               <Routes>
+                {/* Desktop/Web Routes */}
                 <Route path="/*" element={<MainLayout />}>
                   <Route index element={<HomePage />} />
                   <Route path="products" element={<ProductListingPage />} />
@@ -75,6 +83,8 @@ function App() {
                   <Route path="gift-cards" element={<GiftCardPage />} />
                   <Route path="*" element={<NotFoundPage />} />
                 </Route>
+
+                {/* Admin Panel Routes */}
                 <Route path="/admin" element={<AdminLayout />}>
                     <Route index element={<Dashboard />} />
                     <Route path="users" element={<UserManagementPage />} />
@@ -94,6 +104,16 @@ function App() {
                     <Route path="delivery-partners" element={<DeliveryPartnerManagementPage />} />
                     <Route path="delivery-partners/:id" element={<DeliveryPartnerDetailPage />} />
                     <Route path="cluster-logic" element={<ClusterLogicPage />} />
+                </Route>
+
+                {/* Mobile App Routes */}
+                <Route path="/mobile" element={<MobileLayout />}>
+                    <Route index element={<MobileHomePage />} />
+                    <Route path="search" element={<MobileSearchPage />} />
+                    <Route path="cart" element={<MobileCartPage />} />
+                    <Route path="profile" element={<MobileProfilePage />} />
+                    {/* The mobile app will also use the shared product detail page */}
+                    <Route path="products/:id" element={<ProductDetailPage />} />
                 </Route>
               </Routes>
             </OrderProvider>

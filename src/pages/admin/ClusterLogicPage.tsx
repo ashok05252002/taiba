@@ -10,7 +10,7 @@ import ClusterAuditLog from '../../components/admin/cluster-logic/ClusterAuditLo
 import ClusterSetup from '../../components/admin/cluster-logic/ClusterSetup';
 import PostalCodeMapping from '../../components/admin/cluster-logic/PostalCodeMapping';
 
-type ClusterTab = 'map' | 'setup' | 'postal-codes' | 'flow' | 'reservations' | 'deliveries' | 'logs' | 'reports';
+export type ClusterTab = 'setup' | 'postal-codes' | 'map' | 'flow' | 'reservations' | 'deliveries' | 'logs' | 'reports';
 
 const ClusterLogicPage: React.FC = () => {
     const [activeTab, setActiveTab] = useState<ClusterTab>('setup');
