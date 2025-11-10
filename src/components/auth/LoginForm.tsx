@@ -9,7 +9,7 @@ interface LoginFormProps {
 const LoginForm: React.FC<LoginFormProps> = ({ isModal }) => {
     return (
         <div>
-            {!isModal && <img className="mx-auto h-16 w-auto" src="https://taibarare.com/wp-content/themes/taiba/assets/img/home/footer/TAIBA%20ACCESS%20RARE%20FOOTER%20LOGO_.png" alt="Taiba Pharmacy" />}
+            {!isModal && <img className="mx-auto h-16 w-auto" src="public/images/taiba-pharmacy-new (1).png" alt="Taiba Pharmacy" />}
             <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
                 Sign in to your account
             </h2>

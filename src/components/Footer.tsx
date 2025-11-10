@@ -54,7 +54,7 @@ const Footer: React.FC = () => {
             viewport={{ once: true }}
           >
             <Link to="/" className="flex items-center space-x-3 mb-6">
-              <img src="/assets/images/logo-taiba.png" alt="Taiba Pharmacy" className="h-12 w-auto" />
+              <img src="src="public/images/taiba-pharmacy-new (1).png"" alt="Taiba Pharmacy" className="h-12 w-auto" />
             </Link>
             <p className="text-gray-300 mb-6 leading-relaxed">
               Your trusted healthcare partner in Oman, delivering quality and care.
