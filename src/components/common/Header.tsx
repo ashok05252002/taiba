@@ -41,7 +41,7 @@ const Header: React.FC<HeaderProps> = ({ deliveryMode, setDeliveryMode }) => {
                   whileTap={{ scale: 0.95 }}
                 >
                   <img
-                    src="public/images/taiba-pharmacy-new (1).png"
+                    src="/images/taiba-pharmacy-new (1).png"
                     alt="Taiba Pharmacy"
                     className="h-12 w-auto"
                   />

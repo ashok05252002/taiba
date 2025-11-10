@@ -33,7 +33,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
               <X size={24} />
             </motion.button>
             
-           <img src="public/images/taiba-pharmacy-new (1).png" alt="Taiba Pharmacy" className="h-16 w-auto mx-auto mb-4" />
+           <img src="/images/taiba-pharmacy-new (1).png" alt="Taiba Pharmacy" className="h-16 w-auto mx-auto mb-4" />
 
 
             <h2 className="text-2xl font-bold text-gray-900 mb-2">Welcome to Taiba Pharmacy</h2>

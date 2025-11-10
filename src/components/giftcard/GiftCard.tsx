@@ -37,7 +37,7 @@ const GiftCard: React.FC<GiftCardProps> = ({ design, amount, customImage, themed
             )}
             
             <div className="relative z-10 flex justify-between items-start">
-                <img src="public/images/taiba-pharmacy-new (1).png" alt="Logo" className="h-10" style={{ filter: design === 'mustard' && !backgroundImage ? 'none' : 'brightness(0) invert(1)' }} />
+                <img src="/images/taiba-pharmacy-new (1).png" alt="Logo" className="h-10" style={{ filter: design === 'mustard' && !backgroundImage ? 'none' : 'brightness(0) invert(1)' }} />
                 <span className="font-bold text-2xl">OMR {amount ? amount.toFixed(2) : '0.00'}</span>
             </div>
             
