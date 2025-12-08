@@ -14,6 +14,7 @@ import DeliveryModeModal from '../components/common/DeliveryModeModal';
 import { useOrder } from '../contexts/OrderContext';
 import FlyingImage from '../components/common/FlyingImage';
 import NotificationContainer from '../components/common/NotificationContainer';
+import AddAddressModal from '../components/common/AddAddressModal';
 
 const MainLayout: React.FC = () => {
   const [isAuthModalOpen, setAuthModalOpen] = useState(false);
@@ -23,6 +24,7 @@ const MainLayout: React.FC = () => {
   const [isSideBannerClosed, setIsSideBannerClosed] = useState(false);
   const [showAppBanner, setShowAppBanner] = useState(false);
   const [isAppBannerClosed, setIsAppBannerClosed] = useState(false);
+  const [isAddAddressModalOpen, setAddAddressModalOpen] = useState(false);
 
   const { deliveryMode, setDeliveryMode, deliveryModeChosen, setDeliveryModeChosen } = useOrder();
   const [showDeliveryModeModal, setShowDeliveryModeModal] = useState(false);
@@ -80,7 +82,7 @@ const MainLayout: React.FC = () => {
         if (!deliveryModeChosen) {
             setShowDeliveryModeModal(true);
         }
-    }, 20000);
+    }, 5000); // Show delivery modal sooner
 
     const appBannerTimer = setTimeout(() => {
         if (!isAppBannerClosed) {
@@ -141,7 +143,9 @@ const MainLayout: React.FC = () => {
             isOpen={showDeliveryModeModal} 
             onClose={() => setShowDeliveryModeModal(false)}
             onSelectMode={handleSelectDeliveryMode}
+            onAddNewAddress={() => setAddAddressModalOpen(true)}
         />
+        <AddAddressModal isOpen={isAddAddressModalOpen} onClose={() => setAddAddressModalOpen(false)} />
         <FlyingImage />
         <NotificationContainer />
       </div>

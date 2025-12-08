@@ -41,8 +41,8 @@ const Header: React.FC<HeaderProps> = ({ deliveryMode, setDeliveryMode }) => {
                   whileTap={{ scale: 0.95 }}
                 >
                   <img
-                    src="/images/taiba-pharmacy-new (1).png"
-                    alt="Taiba Pharmacy"
+                    src="https://taibarare.com/wp-content/themes/taiba/assets/img/home/footer/TAIBA%20ACCESS%20RARE%20FOOTER%20LOGO_.png"
+                    alt="taiba Pharmacy"
                     className="h-12 w-auto"
                   />
                 </motion.div>
@@ -129,28 +129,28 @@ const Header: React.FC<HeaderProps> = ({ deliveryMode, setDeliveryMode }) => {
                               </div>
                               <Link to="/profile" className="flex items-center space-x-3 w-full text-left p-2 rounded-md hover:bg-gray-100 text-sm font-medium text-gray-700">
                                   <User size={18} />
-                                  <span>My Profile</span>
+                                  <span>{t('profile.my_profile')}</span>
                               </Link>
                               <Link to="/profile" className="flex items-center space-x-3 w-full text-left p-2 rounded-md hover:bg-gray-100 text-sm font-medium text-gray-700">
                                   <Package size={18} />
-                                  <span>My Orders</span>
+                                  <span>{t('profile.my_orders')}</span>
                               </Link>
                               <Link to="/admin" className="flex items-center space-x-3 w-full text-left p-2 rounded-md hover:bg-gray-100 text-sm font-medium text-gray-700">
                                   <Shield size={18} />
-                                  <span>Admin Panel</span>
+                                  <span>{t('profile.admin_panel')}</span>
                               </Link>
                               <Link to="/mobile" className="flex items-center space-x-3 w-full text-left p-2 rounded-md hover:bg-gray-100 text-sm font-medium text-gray-700">
                                   <Smartphone size={18} />
-                                  <span>Mobile View</span>
+                                  <span>{t('profile.mobile_view')}</span>
                               </Link>
                               <button onClick={() => setUIGuideOpen(true)} className="flex items-center space-x-3 w-full text-left p-2 rounded-md hover:bg-gray-100 text-sm font-medium text-gray-700">
                                   <BookOpen size={18} />
-                                  <span>UI Guide</span>
+                                  <span>{t('profile.ui_guide')}</span>
                               </button>
                               <div className="border-t my-2"></div>
                               <button className="flex items-center space-x-3 w-full text-left p-2 rounded-md hover:bg-red-50 text-sm font-medium text-red-600">
                                   <LogOut size={18} />
-                                  <span>Logout</span>
+                                  <span>{t('profile.logout')}</span>
                               </button>
                           </motion.div>
                       )}
@@ -184,9 +184,9 @@ const Header: React.FC<HeaderProps> = ({ deliveryMode, setDeliveryMode }) => {
                 <Search className={`absolute top-1/2 transform -translate-y-1/2 text-taiba-grey ${isRTL ? 'right-4' : 'left-4'}`} size={20} />
               </div>
               <nav className="flex flex-col space-y-2">
-                  <Link to="/products" className="text-gray-700 hover:bg-gray-100 p-3 rounded-md font-medium">Products</Link>
-                  <Link to="/cart" className="text-gray-700 hover:bg-gray-100 p-3 rounded-md font-medium">Cart ({cartCount})</Link>
-                  <a href="https://wa.me/968XXXXXXXX" target="_blank" rel="noopener noreferrer" className="text-gray-700 hover:bg-gray-100 p-3 rounded-md font-medium">WhatsApp Support</a>
+                  <Link to="/products" className="text-gray-700 hover:bg-gray-100 p-3 rounded-md font-medium">{t('header.products')}</Link>
+                  <Link to="/cart" className="text-gray-700 hover:bg-gray-100 p-3 rounded-md font-medium">{t('header.cart')} ({cartCount})</Link>
+                  <a href="https://wa.me/968XXXXXXXX" target="_blank" rel="noopener noreferrer" className="text-gray-700 hover:bg-gray-100 p-3 rounded-md font-medium">{t('header.whatsapp')}</a>
               </nav>
             </motion.div>
           )}

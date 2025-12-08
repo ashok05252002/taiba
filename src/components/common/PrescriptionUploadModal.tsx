@@ -8,16 +8,18 @@ interface PrescriptionUploadModalProps {
   isOpen: boolean;
   onClose: () => void;
   product: Product | null;
+  onSuccess?: () => void;
 }
 
-const PrescriptionUploadModal: React.FC<PrescriptionUploadModalProps> = ({ isOpen, onClose, product }) => {
+const PrescriptionUploadModal: React.FC<PrescriptionUploadModalProps> = ({ isOpen, onClose, product, onSuccess }) => {
   const { addToCart } = useCart();
   const [file, setFile] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [uploadSuccess, setUploadSuccess] = useState(false);
+  const [crNumber, setCrNumber] = useState('');
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) {
+    if (e.target.files && e.target.files[0]) {
       setFile(e.target.files[0]);
     }
   };
@@ -29,13 +31,21 @@ const PrescriptionUploadModal: React.FC<PrescriptionUploadModalProps> = ({ isOpe
     setTimeout(() => {
       setIsUploading(false);
       setUploadSuccess(true);
-      // In a real app, you'd wait for a success response before adding to cart
+      
+      // Add to cart
       addToCart(product);
+      
+      // Trigger success callback if provided (e.g., for Buy Now flow)
+      if (onSuccess) {
+          onSuccess();
+      }
+
       setTimeout(() => {
         onClose();
         // Reset state for next time
         setFile(null);
         setUploadSuccess(false);
+        setCrNumber('');
       }, 1500);
     }, 2000);
   };
@@ -85,7 +95,7 @@ const PrescriptionUploadModal: React.FC<PrescriptionUploadModalProps> = ({ isOpe
                     <p>Drag & drop or click to upload</p>
                   )}
                   <input type="file" className="hidden" id="prescription-upload" onChange={handleFileChange} accept="image/*,.pdf" />
-                  <label htmlFor="prescription-upload" className="mt-2 text-taiba-blue font-semibold cursor-pointer">
+                  <label htmlFor="prescription-upload" className="mt-2 text-taiba-blue font-semibold cursor-pointer hover:underline">
                     Browse File
                   </label>
                 </div>
@@ -95,6 +105,8 @@ const PrescriptionUploadModal: React.FC<PrescriptionUploadModalProps> = ({ isOpe
                     <input
                         type="text"
                         id="cr-number"
+                        value={crNumber}
+                        onChange={(e) => setCrNumber(e.target.value)}
                         placeholder="Enter your Civil Registration Number"
                         className="w-full p-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-taiba-purple focus:border-transparent"
                     />

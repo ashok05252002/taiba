@@ -1,4 +1,4 @@
-import React, { createContext, useState, useContext, ReactNode, useCallback } from 'react';
+import React, { createContext, useState, useContext, ReactNode, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Product, CartItem } from '../types';
 import { generateProducts } from '../utils/mockData';
@@ -22,17 +22,27 @@ interface CartContextType {
   triggerAnimation: (image: string, startRect: DOMRect) => void;
   animationState: AnimationState | null;
   clearAnimation: () => void;
+  // Coupon logic
+  coupon: string | null;
+  discount: number;
+  applyCoupon: (code: string) => void;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
+// Generate initial products and ensure at least one requires a prescription for demo purposes
 const initialProducts = generateProducts(2);
+if (initialProducts.length > 0) {
+    initialProducts[0].prescriptionRequired = true;
+}
 const initialCartItems: CartItem[] = initialProducts.map(p => ({ product: p, quantity: 1 }));
 
 export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [cartItems, setCartItems] = useState<CartItem[]>(initialCartItems);
   const [isShaking, setIsShaking] = useState(false);
   const [animationState, setAnimationState] = useState<AnimationState | null>(null);
+  const [coupon, setCoupon] = useState<string | null>(null);
+  
   const navigate = useNavigate();
   const { addNotification } = useNotification();
 
@@ -101,10 +111,32 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   const clearCart = () => {
     setCartItems([]);
+    setCoupon(null);
   };
 
   const cartCount = cartItems.reduce((count, item) => count + item.quantity, 0);
   const cartTotal = cartItems.reduce((total, item) => total + item.product.price * item.quantity, 0);
+
+  // Derived discount state based on coupon and total
+  const discount = useMemo(() => {
+    if (!coupon) return 0;
+    if (coupon === 'WELCOME10') return cartTotal * 0.10;
+    if (coupon === 'TAIBA20' && cartTotal > 50) return cartTotal * 0.20;
+    if (coupon === 'FREESHIP') return 0; // Handled in delivery fee logic usually
+    return 0;
+  }, [cartTotal, coupon]);
+
+  const applyCoupon = (code: string) => {
+    // Simple validation logic
+    const validCoupons = ['WELCOME10', 'TAIBA20', 'FREESHIP', 'WELCOME15'];
+    if (validCoupons.includes(code)) {
+        setCoupon(code);
+        addNotification({ message: 'Coupon applied successfully!', type: 'success' });
+    } else {
+        setCoupon(null);
+        addNotification({ message: 'Invalid coupon code', type: 'error' });
+    }
+  };
 
   const value = {
     cartItems,
@@ -119,6 +151,9 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     triggerAnimation,
     animationState,
     clearAnimation,
+    coupon,
+    discount,
+    applyCoupon
   };
 
   return (

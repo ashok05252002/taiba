@@ -5,12 +5,13 @@ import { Product } from '../types';
 import { useLanguage } from '../hooks/useLanguage';
 import ProductGrid from '../components/ProductGrid';
 import LoadingLottie from '../components/common/LoadingLottie';
-import { Star, AlertCircle, ShoppingBag } from 'lucide-react';
+import { Star, AlertCircle, ShoppingBag, Heart } from 'lucide-react';
 import { generateProducts, generateReviews } from '../utils/mockData';
 import AddToCartButton from '../components/common/AddToCartButton';
 import ProductInfoSection from '../components/product/ProductInfoSection';
 import CustomerReviews from '../components/product/CustomerReviews';
 import { useCart } from '../contexts/CartContext';
+import { useWishlist } from '../contexts/WishlistContext';
 
 const ProductDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -21,6 +22,7 @@ const ProductDetailPage: React.FC = () => {
   const [relatedLoading, setRelatedLoading] = useState(true);
   const { t } = useLanguage();
   const { buyNow, triggerAnimation } = useCart();
+  const { isInWishlist, addToWishlist, removeFromWishlist } = useWishlist();
   const addToCartRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -48,6 +50,16 @@ const ProductDetailPage: React.FC = () => {
     }
   };
 
+  const handleWishlistToggle = () => {
+    if (product) {
+      if (isInWishlist(product.id)) {
+        removeFromWishlist(product.id);
+      } else {
+        addToWishlist(product.id);
+      }
+    }
+  };
+
   if (loading) {
     return (
       <div className="flex justify-center items-center h-[80vh]">
@@ -59,6 +71,8 @@ const ProductDetailPage: React.FC = () => {
   if (!product) {
     return <div className="text-center py-20">Product not found.</div>;
   }
+  
+  const inWishlist = isInWishlist(product.id);
 
   return (
     <motion.div 
@@ -125,6 +139,15 @@ const ProductDetailPage: React.FC = () => {
               >
                 <ShoppingBag size={18} />
                 <span>Buy Now</span>
+              </motion.button>
+              <motion.button
+                onClick={handleWishlistToggle}
+                className="border-2 rounded-full flex items-center justify-center space-x-2 px-4 py-2 h-10 font-semibold"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <Heart size={18} className={`transition-colors ${inWishlist ? 'text-red-500 fill-current' : 'text-gray-600'}`} />
+                <span>{inWishlist ? 'In Wishlist' : 'Add to Wishlist'}</span>
               </motion.button>
             </div>
           </motion.div>

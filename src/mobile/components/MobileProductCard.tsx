@@ -1,9 +1,10 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { Plus } from 'lucide-react';
+import { Plus, Heart } from 'lucide-react';
 import { Product } from '../../types';
 import { useCart } from '../../contexts/CartContext';
+import { useWishlist } from '../../contexts/WishlistContext';
 
 interface MobileProductCardProps {
   product: Product;
@@ -11,6 +12,19 @@ interface MobileProductCardProps {
 
 const MobileProductCard: React.FC<MobileProductCardProps> = ({ product }) => {
   const { addToCart } = useCart();
+  const { isInWishlist, addToWishlist, removeFromWishlist } = useWishlist();
+
+  const inWishlist = isInWishlist(product.id);
+
+  const handleWishlistToggle = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (inWishlist) {
+      removeFromWishlist(product.id);
+    } else {
+      addToWishlist(product.id);
+    }
+  };
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -37,6 +51,13 @@ const MobileProductCard: React.FC<MobileProductCardProps> = ({ product }) => {
               {Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)}% OFF
             </div>
           )}
+          <motion.button
+            onClick={handleWishlistToggle}
+            className="absolute top-2 right-2 bg-white/70 backdrop-blur-sm p-1.5 rounded-full"
+            whileTap={{ scale: 0.9 }}
+          >
+            <Heart size={16} className={`transition-colors ${inWishlist ? 'text-red-500 fill-current' : 'text-gray-500'}`}/>
+          </motion.button>
         </div>
         
         <div className="p-3 flex flex-col flex-grow">
