@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Crown, Gift, Star, ShoppingBag } from 'lucide-react';
+import { p } from 'framer-motion/client';
 
 const RewardsPage: React.FC = () => {
     const tiers = [
@@ -16,7 +17,9 @@ const RewardsPage: React.FC = () => {
     ];
 
     return (
+        
         <div className="bg-white py-16">
+            
             <div className="max-w-5xl mx-auto px-4">
                 <motion.div 
                     className="text-center mb-12"
