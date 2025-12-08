@@ -42,7 +42,7 @@ const AdminSidebar: React.FC = () => {
     <aside className="w-72 bg-white border-r border-gray-200 flex flex-col">
       <div className="p-4 border-b border-gray-200">
         <Link to="/" className="flex items-center space-x-2">
-           <img src="/images/taiba-pharmacy-new (1).png" alt="Taiba Pharmacy" className="h-10 w-auto" />
+           <img src="https://taibarare.com/wp-content/themes/taiba/assets/img/home/footer/TAIBA%20ACCESS%20RARE%20FOOTER%20LOGO_.png" alt="taiba Pharmacy" className="h-10 w-auto" />
            <span className="font-bold text-xl text-gray-800">Admin Panel</span>
         </Link>
       </div>

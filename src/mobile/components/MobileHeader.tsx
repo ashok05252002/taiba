@@ -14,8 +14,8 @@ const MobileHeader: React.FC = () => {
       </div>
       <Link to="/" className="absolute left-1/2 -translate-x-1/2">
         <img
-          src="/images/taiba-pharmacy-new (1).png"
-          alt="Taiba Pharmacy"
+          src="https://taibarare.com/wp-content/themes/taiba/assets/img/home/footer/TAIBA%20ACCESS%20RARE%20FOOTER%20LOGO_.png"
+          alt="taiba Pharmacy"
           className="h-10 w-auto"
         />
       </Link>

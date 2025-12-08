@@ -1,19 +1,20 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Crown, Gift, Star, ShoppingBag } from 'lucide-react';
-import { p } from 'framer-motion/client';
+import { useLanguage } from '../../hooks/useLanguage';
 
 const RewardsPage: React.FC = () => {
+    const { t } = useLanguage();
     const tiers = [
-        { name: 'Bronze', points: '0-999', color: 'text-yellow-600', bg: 'bg-yellow-100' },
-        { name: 'Silver', points: '1000-2999', color: 'text-gray-500', bg: 'bg-gray-200' },
-        { name: 'Gold', points: '3000+', color: 'text-yellow-500', bg: 'bg-yellow-200' },
+        { name: t('rewards.tier_bronze'), points: '0-999', color: 'text-yellow-600', bg: 'bg-yellow-100' },
+        { name: t('rewards.tier_silver'), points: '1000-2999', color: 'text-gray-500', bg: 'bg-gray-200' },
+        { name: t('rewards.tier_gold'), points: '3000+', color: 'text-yellow-500', bg: 'bg-yellow-200' },
     ];
 
     const redeemOptions = [
-        { points: 500, reward: 'OMR 5 Voucher' },
-        { points: 1000, reward: 'Free Delivery for a Month' },
-        { points: 2500, reward: '15% Off Total Order' },
+        { points: 500, reward: t('rewards.redeem_1') },
+        { points: 1000, reward: t('rewards.redeem_2') },
+        { points: 2500, reward: t('rewards.redeem_3') },
     ];
 
     return (
@@ -26,8 +27,8 @@ const RewardsPage: React.FC = () => {
                     initial={{ opacity: 0, y: -20 }}
                     animate={{ opacity: 1, y: 0 }}
                 >
-                    <h1 className="text-4xl md:text-5xl font-bold text-taiba-purple mb-4">Taiba Rewards Program</h1>
-                    <p className="text-lg text-taiba-grey">Earn points, unlock exclusive benefits, and get rewarded for your loyalty.</p>
+                    <h1 className="text-4xl md:text-5xl font-bold text-taiba-purple mb-4">{t('rewards.title')}</h1>
+                    <p className="text-lg text-taiba-grey">{t('rewards.subtitle')}</p>
                 </motion.div>
 
                 {/* Current Status */}
@@ -39,14 +40,14 @@ const RewardsPage: React.FC = () => {
                 >
                     <div className="flex justify-between items-center">
                         <div>
-                            <p className="text-lg">Your Current Balance</p>
-                            <p className="text-4xl font-bold">2,450 Points</p>
+                            <p className="text-lg">{t('rewards.current_balance')}</p>
+                            <p className="text-4xl font-bold">2,450 {t('rewards.points')}</p>
                         </div>
                         <div className="text-right">
-                            <p className="text-lg">Your Tier</p>
+                            <p className="text-lg">{t('rewards.your_tier')}</p>
                             <p className="text-4xl font-bold flex items-center space-x-2">
-                                <Crown className="text-taiba-mustard" />
-                                <span>Silver Member</span>
+                                <Award className="text-taiba-mustard" />
+                                <span>{t('rewards.tier_silver')}</span>
                             </p>
                         </div>
                     </div>
@@ -54,7 +55,7 @@ const RewardsPage: React.FC = () => {
 
                 {/* Redeem Points */}
                 <section className="mb-12">
-                    <h2 className="text-3xl font-bold text-center text-gray-900 mb-8">Redeem Your Points</h2>
+                    <h2 className="text-3xl font-bold text-center text-gray-900 mb-8">{t('rewards.redeem_title')}</h2>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                         {redeemOptions.map((option, index) => (
                             <motion.div
@@ -66,8 +67,8 @@ const RewardsPage: React.FC = () => {
                                 transition={{ duration: 0.5, delay: index * 0.1 }}
                             >
                                 <h3 className="font-bold text-xl text-taiba-blue mb-2">{option.reward}</h3>
-                                <p className="text-2xl font-bold text-taiba-purple mb-4">{option.points} pts</p>
-                                <button className="bg-taiba-mustard text-black font-semibold px-6 py-2 rounded-full">Redeem</button>
+                                <p className="text-2xl font-bold text-taiba-purple mb-4">{option.points} {t('rewards.pts')}</p>
+                                <button className="bg-taiba-mustard text-black font-semibold px-6 py-2 rounded-full">{t('rewards.redeem_cta')}</button>
                             </motion.div>
                         ))}
                     </div>
@@ -75,13 +76,13 @@ const RewardsPage: React.FC = () => {
 
                 {/* How to Earn */}
                 <section className="mb-12">
-                    <h2 className="text-3xl font-bold text-center text-gray-900 mb-8">How to Earn Points</h2>
+                    <h2 className="text-3xl font-bold text-center text-gray-900 mb-8">{t('rewards.how_to_earn_title')}</h2>
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 text-center">
                         {[
-                            { icon: '🛒', title: 'Shop Online', desc: '1 point per OMR 1' },
-                            { icon: '📝', title: 'Write a Review', desc: '50 points' },
-                            { icon: '👥', title: 'Refer a Friend', desc: '200 points' },
-                            { icon: '🎂', title: 'Birthday Bonus', desc: '500 points' }
+                            { icon: '🛒', title: t('rewards.earn_shop'), desc: t('rewards.earn_shop_desc') },
+                            { icon: '📝', title: t('rewards.earn_review'), desc: t('rewards.earn_review_desc') },
+                            { icon: '👥', title: t('rewards.earn_refer'), desc: t('rewards.earn_refer_desc') },
+                            { icon: '🎂', title: t('rewards.earn_birthday'), desc: t('rewards.earn_birthday_desc') }
                         ].map((item, index) => (
                              <motion.div 
                                 key={index}
@@ -98,7 +99,7 @@ const RewardsPage: React.FC = () => {
 
                 {/* Tiers */}
                 <section>
-                    <h2 className="text-3xl font-bold text-center text-gray-900 mb-8">Membership Tiers</h2>
+                    <h2 className="text-3xl font-bold text-center text-gray-900 mb-8">{t('rewards.tiers_title')}</h2>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                         {tiers.map((tier, index) => (
                             <motion.div 
@@ -110,11 +111,11 @@ const RewardsPage: React.FC = () => {
                                 transition={{ duration: 0.5, delay: index * 0.1 }}
                             >
                                 <h3 className={`text-2xl font-bold ${tier.color} mb-2`}>{tier.name}</h3>
-                                <p className="font-semibold mb-4">{tier.points} Points</p>
+                                <p className="font-semibold mb-4">{tier.points} {t('rewards.points')}</p>
                                 <ul className="space-y-2 text-left">
-                                    <li className="flex items-center space-x-2"><Star size={16} className={tier.color} /> <span>Base points earning</span></li>
-                                    {index > 0 && <li className="flex items-center space-x-2"><Gift size={16} className={tier.color} /> <span>Exclusive offers</span></li>}
-                                    {index > 1 && <li className="flex items-center space-x-2"><ShoppingBag size={16} className={tier.color} /> <span>Early access to sales</span></li>}
+                                    <li className="flex items-center space-x-2"><Star size={16} className={tier.color} /> <span>{t('rewards.tier_benefit_1')}</span></li>
+                                    {index > 0 && <li className="flex items-center space-x-2"><Gift size={16} className={tier.color} /> <span>{t('rewards.tier_benefit_2')}</span></li>}
+                                    {index > 1 && <li className="flex items-center space-x-2"><ShoppingBag size={16} className={tier.color} /> <span>{t('rewards.tier_benefit_3')}</span></li>}
                                 </ul>
                             </motion.div>
                         ))}

@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X, ArrowLeft } from 'lucide-react';
 import LoginForm from '../auth/LoginForm';
 import SignupForm from '../auth/SignupForm';
+import { useLanguage } from '../../hooks/useLanguage';
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -11,6 +12,7 @@ interface AuthModalProps {
 
 const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
   const [view, setView] = useState<'initial' | 'login' | 'signup'>('initial');
+  const { t } = useLanguage();
 
   const handleClose = () => {
     onClose();
@@ -56,9 +58,9 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
               {view === 'initial' && (
                 <motion.div key="initial" variants={modalVariants} initial="hidden" animate="visible" exit="exit">
                   <div className="text-center">
-                    <img src="/images/taiba-pharmacy-new (1).png" alt="Taiba Pharmacy" className="h-16 w-auto mx-auto mb-4" />
-                    <h2 className="text-2xl font-bold text-gray-900 mb-2">Join the Taiba Family</h2>
-                    <p className="text-taiba-grey mb-6">Sign in or create an account to enjoy exclusive benefits.</p>
+                    <img src="https://taibarare.com/wp-content/themes/taiba/assets/img/home/footer/TAIBA%20ACCESS%20RARE%20FOOTER%20LOGO_.png" alt="taiba Pharmacy" className="h-16 w-auto mx-auto mb-4" />
+                    <h2 className="text-2xl font-bold text-gray-900 mb-2">{t('auth.welcome')}</h2>
+                    <p className="text-taiba-grey mb-6">{t('auth.subtitle')}</p>
                     <div className="space-y-4">
                       <motion.button
                         onClick={() => setView('signup')}
@@ -66,7 +68,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
                         whileHover={{ scale: 1.03, boxShadow: '0px 5px 15px rgba(115, 38, 117, 0.3)' }}
                         whileTap={{ scale: 0.98 }}
                       >
-                        Create an Account
+                        {t('auth.create_account')}
                       </motion.button>
                       <motion.button
                         onClick={() => setView('login')}
@@ -74,7 +76,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
                         whileHover={{ scale: 1.03, boxShadow: '0px 5px 15px rgba(16, 139, 250, 0.3)' }}
                         whileTap={{ scale: 0.98 }}
                       >
-                        Sign In
+                        {t('auth.sign_in')}
                       </motion.button>
                     </div>
                   </div>
@@ -85,7 +87,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
                 <motion.div key="form" variants={modalVariants} initial="hidden" animate="visible" exit="exit">
                   <button onClick={() => setView('initial')} className="flex items-center space-x-2 text-sm font-medium text-taiba-grey hover:text-taiba-blue mb-4">
                     <ArrowLeft size={16} />
-                    <span>Back</span>
+                    <span>{t('auth.back')}</span>
                   </button>
                   {view === 'login' ? <LoginForm isModal /> : <SignupForm isModal />}
                 </motion.div>

@@ -1,5 +1,5 @@
 import { faker } from '@faker-js/faker';
-import { Product } from '../types';
+import { Product, Order, RefundRequest } from '../types';
 
 const imageUrls = {
   Medicines: [
@@ -141,19 +141,43 @@ const generateProducts = (count: number, options?: GenerationOptions): Product[]
     });
 };
 
-const generateOrderHistory = (count: number) => {
+const generateOrderHistory = (count: number): Order[] => {
     return Array.from({ length: count }, () => {
         const products = generateProducts(faker.number.int({ min: 1, max: 5 }));
-        const total = products.reduce((sum, p) => sum + p.price, 0);
+        const cartItems = products.map(p => ({ product: p, quantity: faker.number.int({min: 1, max: 3}) }));
+        const total = cartItems.reduce((sum, item) => sum + item.product.price * item.quantity, 0);
+        const date = faker.date.past({ years: 1 });
         return {
             id: `TP${faker.number.int({ min: 100000, max: 999999 })}`,
-            date: faker.date.past({ years: 1 }).toLocaleDateString(),
-            status: faker.helpers.arrayElement(['Delivered', 'Processing', 'Cancelled']),
+            date: date.toLocaleDateString(),
+            status: faker.helpers.arrayElement(['Delivered', 'Processing', 'Cancelled', 'Shipped', 'Out for Delivery']),
             total: total.toFixed(2),
-            items: products,
+            items: cartItems,
+            shippingAddress: `${faker.location.streetAddress()}, ${faker.location.city()}`,
+            paymentMethod: 'Credit Card',
+            activityLog: [
+                { status: 'Order Placed', timestamp: date.toISOString() },
+                { status: 'Payment Confirmed', timestamp: new Date(date.getTime() + 5 * 60000).toISOString() },
+                { status: 'Processing', timestamp: new Date(date.getTime() + 2 * 3600000).toISOString() },
+            ],
         };
     });
 };
+
+const generateRefundRequests = (count: number): RefundRequest[] => {
+    return Array.from({ length: count }, () => {
+        return {
+            id: `RF${faker.string.alphanumeric(8).toUpperCase()}`,
+            orderId: `TP${faker.number.int({ min: 100000, max: 999999 })}`,
+            date: faker.date.recent({ days: 30 }).toLocaleDateString(),
+            productName: faker.commerce.productName(),
+            amount: faker.commerce.price({ min: 5, max: 50 }),
+            status: faker.helpers.arrayElement(['Pending', 'Approved', 'Rejected']),
+            reason: faker.lorem.sentence(),
+        };
+    });
+};
+
 
 const generateAddresses = (count: number) => {
     return Array.from({ length: count }, (_, i) => ({
@@ -278,12 +302,13 @@ const generatePromotions = (count: number) => {
     return Array.from({ length: count }, () => ({
         id: faker.string.uuid(),
         title: faker.lorem.words(3),
-        type: faker.helpers.arrayElement(['Percentage', 'Fixed Amount', 'BOGO']),
+        type: faker.helpers.arrayElement(['Percentage', 'Fixed Amount', 'BOGO', 'Bundle Deal']),
         value: faker.number.int({ min: 5, max: 50 }),
         status: faker.helpers.arrayElement(['Active', 'Expired', 'Scheduled']),
         startDate: faker.date.past().toLocaleDateString(),
         endDate: faker.date.future().toLocaleDateString(),
         usageCount: faker.number.int({ min: 0, max: 1000 }),
+        eligibleProductIds: [],
     }));
 };
 

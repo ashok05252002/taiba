@@ -7,6 +7,7 @@ export interface Product {
   category: string;
   prescriptionRequired: boolean;
   inStock: boolean;
+  stock: number;
   rating: number;
   description: string;
   dosage?: string;
@@ -15,6 +16,7 @@ export interface Product {
   benefits: string[];
   activeIngredients: { name: string; benefit: string; }[];
   directionsForUse: string;
+  expiryDate: string;
 }
 
 export interface CartItem {
@@ -22,9 +24,29 @@ export interface CartItem {
   quantity: number;
 }
 
-export interface OrderStatus {
-  id: string;
-  status: 'confirmed' | 'packed' | 'out-for-delivery' | 'delivered';
+export interface OrderActivity {
+  status: string;
   timestamp: string;
   location?: string;
+}
+
+export interface Order {
+  id: string;
+  date: string;
+  status: 'Delivered' | 'Processing' | 'Cancelled' | 'Shipped' | 'Out for Delivery';
+  total: string;
+  items: CartItem[];
+  activityLog: OrderActivity[];
+  shippingAddress: string;
+  paymentMethod: string;
+}
+
+export interface RefundRequest {
+    id: string;
+    orderId: string;
+    date: string;
+    productName: string;
+    amount: string;
+    status: 'Pending' | 'Approved' | 'Rejected';
+    reason: string;
 }
